@@ -24,12 +24,12 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun getDailyPuzzle(completion: (String) -> Unit) {
-        service.getDailyPuzzle().enqueue(object: Callback<DailyPuzzle> {
-            override fun onResponse(call: Call<DailyPuzzle>, response: Response<DailyPuzzle>) {
-                completion(response.body()?.text ?: "")
+        service.getPuzzle().enqueue(object: Callback<PuzzleInfo> {
+            override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
+                completion(response.body()?.toString() ?: "")
             }
 
-            override fun onFailure(call: Call<DailyPuzzle>, t: Throwable) {
+            override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
                 Log.e("APP_TAG", "onFailure", t)
             }
         })
