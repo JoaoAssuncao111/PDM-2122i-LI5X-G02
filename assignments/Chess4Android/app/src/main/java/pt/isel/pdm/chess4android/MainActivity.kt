@@ -1,6 +1,7 @@
 package pt.isel.pdm.chess4android
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import pt.isel.pdm.chess4android.databinding.ActivityMainBinding
 import pt.isel.pdm.chess4android.views.Tile
@@ -25,15 +26,19 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
+    private val viewModel: MainActivityViewModel by viewModels()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         val call = dailyPuzzleService.getPuzzle()
-        call
 
         call.enqueue(object : Callback<PuzzleInfo> {
             override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
+                val game = response.body()?.game
+
             }
             override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
             }
