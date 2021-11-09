@@ -14,7 +14,10 @@ class MainActivityViewModel : ViewModel() {
         Log.v("APP_TAG", "MainActivityViewModel.init()")
 
     }
+    data class Pgn(val moves: String)
+    data class Solution(val moves: Array<String>)
 
+    
     companion object {
         val service = Retrofit.Builder()
             .baseUrl("https://lichess.org/api/puzzle/daily")
@@ -26,7 +29,7 @@ class MainActivityViewModel : ViewModel() {
     fun getDailyPuzzle(completion: (String) -> Unit) {
         service.getPuzzle().enqueue(object: Callback<PuzzleInfo> {
             override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
-                completion(response.body()?.toString() ?: "")
+                completion(response.body()?.game.toString())
             }
 
             override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
