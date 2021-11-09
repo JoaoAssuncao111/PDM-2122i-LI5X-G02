@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val call = dailyPuzzleService.getPuzzle()
-        call
 
         call.enqueue(object : Callback<PuzzleInfo> {
             override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
