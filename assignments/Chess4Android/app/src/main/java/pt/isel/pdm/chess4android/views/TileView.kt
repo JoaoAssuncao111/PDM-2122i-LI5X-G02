@@ -22,7 +22,7 @@ import pt.isel.pdm.chess4android.R
  *
  */
 @SuppressLint("ViewConstructor")
-class Tile(
+class TileView(
     private val ctx: Context,
     private val type: Type,
     private val tilesPerSide: Int,

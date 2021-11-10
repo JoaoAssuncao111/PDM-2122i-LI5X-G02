@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import pt.isel.pdm.chess4android.databinding.ActivityMainBinding
-import pt.isel.pdm.chess4android.views.Tile
+import pt.isel.pdm.chess4android.views.TileView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
+
     private val viewModel: MainActivityViewModel by viewModels()
 
 
@@ -34,6 +35,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val call = dailyPuzzleService.getPuzzle()
+        viewModel.dailyPuzzle.observe(this,){
+
+        }
 
         call.enqueue(object : Callback<PuzzleInfo> {
             override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
@@ -44,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        binding.boardView.onTileClickedListener = { tile: Tile, row: Int, column: Int ->
+        binding.boardView.onTileClickedListener = { tile: TileView, row: Int, column: Int ->
             val randomArmy = Army.values()[Random.nextInt(Army.values().indices)]
             val randomPiece = Piece.values()[Random.nextInt(Piece.values().indices)]
             tile.piece = Pair(randomArmy, randomPiece)

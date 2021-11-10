@@ -10,10 +10,10 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import pt.isel.pdm.chess4android.Army
 import pt.isel.pdm.chess4android.Piece
 import pt.isel.pdm.chess4android.R
-import pt.isel.pdm.chess4android.views.Tile.Type
+import pt.isel.pdm.chess4android.views.TileView.Type
 
 
-typealias TileTouchListener = (tile: Tile, row: Int, column: Int) -> Unit
+typealias TileTouchListener = (tile: TileView, row: Int, column: Int) -> Unit
 
 /**
  * Custom view that implements a chess board.
@@ -53,7 +53,7 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
         repeat(side * side) {
             val row = it / side
             val column = it % side
-            val tile = Tile(
+            val tile = TileView(
                 ctx,
                 if((row + column) % 2 == 0) Type.WHITE else Type.BLACK,
                 side,
