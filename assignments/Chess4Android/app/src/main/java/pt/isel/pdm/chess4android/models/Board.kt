@@ -4,8 +4,8 @@ import pt.isel.pdm.chess4android.Army
 
 
 class Board() {
-    val side: Int = 8
-    val currentPieceLegalMoves = mutableListOf<Tile>()
+    private val side: Int = 8
+    private val currentPieceLegalMoves = mutableListOf<Tile>()
 
     var whiteKing: ChessPiece? = null
     var blackKing: ChessPiece? = null
@@ -30,21 +30,29 @@ class Board() {
             addToBoard(Pawn(Army.BLACK, 7, i))
         }
 
-        whiteKing = King(Army.WHITE,1,4)
-        blackKing = King(Army.BLACK,8,4)
+        whiteKing = King(Army.WHITE, 1, 4)
+        blackKing = King(Army.BLACK, 8, 4)
+
         whiteKing?.let { addToBoard(it) }
         blackKing?.let { addToBoard(it) }
-        addToBoard(Queen(Army.WHITE,1,5))
-        addToBoard(Queen(Army.BLACK,1,5))
-        
+
+        addToBoard(Queen(Army.WHITE, 1, 5))
+        addToBoard(Queen(Army.BLACK, 1, 5))
+
     }
 
 
     fun allLegalMoves(piece: ChessPiece): MutableList<Tile> {
+
         val allMoves = piece.myMoves()
         for (list in allMoves) {
             for (tile in list) {
                 var currentTilePiece = pieceAtTile(tile)
+                //Stopping king from moving into a check position
+                if (piece is King && currentTilePiece?.army != piece.army) {
+                    if (getAllChecks(piece.army, tile).size != 0) continue
+                }
+
                 if (currentTilePiece == null) {
                     currentPieceLegalMoves.add(tile)
                 } else if (currentTilePiece.army != piece.army) {
@@ -53,10 +61,31 @@ class Board() {
                 } else break
             }
         }
+
         return currentPieceLegalMoves
     }
 
+    //return wether or not a piece can stop the king from its army from being attacked
+    fun canMoveToBlock(piece: ChessPiece, goalTiles: List<Tile>): Boolean {
+        for (tile in goalTiles)
+            if (allLegalMoves(piece).contains(tile)) return true
+        return false
+    }
 
+    //Returns all pieces that attack a certain tile (army refers to the one being attacked)
+    fun getAllChecks(army: Army, tile: Tile): MutableList<ChessPiece> {
+        var piecesThatCheck: MutableList<ChessPiece> = mutableListOf()
+        for (row in board) {
+            for (piece in row) {
+                if (piece != null && piece.army != army) {
+                    if (allLegalMoves(piece).contains(tile)) piecesThatCheck.add(piece)
+                }
+            }
+        }
+        return piecesThatCheck
+    }
+
+    //returns the piece at the given tile
     fun pieceAtTile(tile: Tile): ChessPiece? {
         return board[tile.row][tile.column]
     }
