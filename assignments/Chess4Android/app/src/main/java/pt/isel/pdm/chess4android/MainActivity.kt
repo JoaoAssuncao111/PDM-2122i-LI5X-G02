@@ -10,8 +10,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.random.Random
-import kotlin.random.nextInt
+
 
 val dailyPuzzleService: DailyPuzzleService = Retrofit.Builder()
     .baseUrl(URL)
@@ -49,9 +48,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.boardView.onTileClickedListener = { tile: TileView, row: Int, column: Int ->
-            val randomArmy = Army.values()[Random.nextInt(Army.values().indices)]
-            val randomPiece = Piece.values()[Random.nextInt(Piece.values().indices)]
-            tile.piece = Pair(randomArmy, randomPiece)
+            viewModel
         }
     }
 }

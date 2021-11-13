@@ -5,15 +5,16 @@ import pt.isel.pdm.chess4android.Army
 
 class Board() {
     private val side: Int = 8
-    private val currentPieceLegalMoves = mutableListOf<Tile>()
+
 
     var whiteKing: ChessPiece? = null
     var blackKing: ChessPiece? = null
+    var currentArmy: Army = Army.WHITE
 
     private var board = Array<Array<ChessPiece?>>(side) { i -> Array(8) { j -> null } }
 
     private fun addToBoard(p: ChessPiece) {
-        board[p.row][p.column]
+        board[p.row][p.column] = p
     }
 
     fun startGame() {
@@ -43,11 +44,19 @@ class Board() {
 
 
     fun allLegalMoves(piece: ChessPiece): MutableList<Tile> {
-
+        val currentPieceLegalMoves = mutableListOf<Tile>()
         val allMoves = piece.myMoves()
-        for (list in allMoves) {
-            for (tile in list) {
-                var currentTilePiece = pieceAtTile(tile)
+
+        for ((key, value) in allMoves) {
+            for (tile in value) {
+                var currentTilePiece = getPieceAtTile(tile)
+                if (piece is Pawn) {
+                    //lets pawn move diagonally if there is an enemy piece there
+                    if (key != Directions.UP && key != Directions.DOWN) {
+                        if (currentTilePiece != null && currentTilePiece.army != piece.army) currentPieceLegalMoves.add(tile)
+                    } else if (getPieceAtTile(tile) == null) currentPieceLegalMoves.add(tile)
+                    continue
+                }
                 //Stopping king from moving into a check position
                 if (piece is King && currentTilePiece?.army != piece.army) {
                     if (getAllChecks(piece.army, tile).size != 0) continue
@@ -65,7 +74,14 @@ class Board() {
         return currentPieceLegalMoves
     }
 
-    //return wether or not a piece can stop the king from its army from being attacked
+    fun makeMove(piece: ChessPiece, goalTile: Tile){
+        setPieceAtTile(goalTile,piece)
+        setPieceAtTile(Tile(piece.row,piece.column), null)
+        piece.column = goalTile.column
+        piece.row = goalTile.row
+    }
+
+    //return whether or not a piece can stop the king from its army from being attacked
     fun canMoveToBlock(piece: ChessPiece, goalTiles: List<Tile>): Boolean {
         for (tile in goalTiles)
             if (allLegalMoves(piece).contains(tile)) return true
@@ -85,10 +101,27 @@ class Board() {
         return piecesThatCheck
     }
 
+    //Puts piece at designated position on board
+    fun setPieceAtTile(tile: Tile, piece: ChessPiece?){
+        board[tile.row][tile.column] = piece
+    }
+
     //returns the piece at the given tile
-    fun pieceAtTile(tile: Tile): ChessPiece? {
+    fun getPieceAtTile(tile: Tile): ChessPiece? {
         return board[tile.row][tile.column]
     }
 
+    fun isSameArmy(tile: Tile): Boolean{
+        if(getPieceAtTile(tile)?.army != currentArmy) return false
+        return true
+    }
+
+    fun isAllowedToMove(tile: Tile, legalMoves: List<Tile>): Boolean{
+        return legalMoves.contains(tile)
+    }
+
+    fun turnSwitch(){
+        currentArmy = if(currentArmy == Army.WHITE) Army.BLACK else Army.WHITE
+    }
 
 }

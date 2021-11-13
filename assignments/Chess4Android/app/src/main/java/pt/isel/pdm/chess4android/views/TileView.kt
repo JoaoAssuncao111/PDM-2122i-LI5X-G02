@@ -21,6 +21,7 @@ import pt.isel.pdm.chess4android.R
  * @property tilesPerSide   The number of tiles in each side of the chess board
  *
  */
+
 @SuppressLint("ViewConstructor")
 class TileView(
     private val ctx: Context,

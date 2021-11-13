@@ -1,11 +1,12 @@
 package pt.isel.pdm.chess4android.models
 
 import pt.isel.pdm.chess4android.Army
+import java.util.*
 
 
 abstract class ChessPiece (val army: Army, var row: Int, var column: Int) {
     val maxRange: Int = 8
-    abstract fun myMoves(): MutableList<List<Tile>>
+    abstract fun myMoves(): EnumMap<Directions,List<Tile>>
 
     fun directionalMove(range: Int, direction: Directions): List<Tile> {
         var list: MutableList<Tile> = mutableListOf()
