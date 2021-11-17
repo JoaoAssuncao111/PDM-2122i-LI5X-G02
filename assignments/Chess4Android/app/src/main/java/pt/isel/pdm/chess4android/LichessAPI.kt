@@ -8,8 +8,8 @@ const val URL = "https://lichess.org/api/"
 
 data class PuzzleInfo(val game: Game, val puzzle: Puzzle)
 
-data class Game(val id: String)
-data class Puzzle(val id: String)
+data class Game(val pgn: String)
+data class Puzzle(val solution: String)
 
 interface DailyPuzzleService {
     @GET("puzzle/daily/")

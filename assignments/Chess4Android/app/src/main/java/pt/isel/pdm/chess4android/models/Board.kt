@@ -10,8 +10,8 @@ class Board() {
     var whiteKing: ChessPiece? = null
     var blackKing: ChessPiece? = null
     var currentArmy: Army = Army.WHITE
-
-    private var board = Array<Array<ChessPiece?>>(side) { i -> Array(8) { j -> null } }
+    var lastMove: Pair<Tile, ChessPiece>? = null
+    var board = Array<Array<ChessPiece?>>(side) { i -> Array(8) { j -> null } }
 
     private fun addToBoard(p: ChessPiece) {
         board[p.row][p.column] = p
@@ -75,6 +75,7 @@ class Board() {
     }
 
     fun makeMove(piece: ChessPiece, goalTile: Tile){
+        lastMove = Pair(Tile(piece.row,piece.column),piece)
         setPieceAtTile(goalTile,piece)
         setPieceAtTile(Tile(piece.row,piece.column), null)
         piece.column = goalTile.column

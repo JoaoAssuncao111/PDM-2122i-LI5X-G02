@@ -24,16 +24,14 @@ class MainActivityViewModel(
     var board: Board? = null
 
     init {
+        board = Board()
         Log.v("APP_TAG", "MainActivityViewModel.init()")
 
     }
 
-    fun createBoard() {
-        board = Board()
-    }
 
     fun checkBoardOnClick(row: Int, column: Int) {
-        if(board == null) return
+        if (board == null) return
         val tile = Tile(row, column)
         //Verifies if the touch was supposed to select a piece
         if (board!!.isSameArmy(tile)) {
@@ -43,14 +41,15 @@ class MainActivityViewModel(
                 currentPieceMoves = board!!.allLegalMoves(currentPiece!!)
             }
             //Verifies if the touch was supposed to move a piece
-        } else if(currentPiece != null){
-            if(currentPieceMoves != null && currentPieceMoves!!.isNotEmpty()){
-                if(board!!.isAllowedToMove(tile, currentPieceMoves!!)){
-                    board!!.makeMove(currentPiece!!,tile)
+        } else if (currentPiece != null) {
+            if (currentPieceMoves != null && currentPieceMoves!!.isNotEmpty()) {
+                if (board!!.isAllowedToMove(tile, currentPieceMoves!!)) {
+                    board!!.makeMove(currentPiece!!, tile)
                     currentPiece = null
                     currentPieceMoves = null
                     //TODO("Verify game-ending situations")
                     board!!.turnSwitch()
+                    //post value board live data
 
                 }
             }
@@ -59,26 +58,64 @@ class MainActivityViewModel(
 
     }
 
+    fun selectPiece(row: Int, column: Int): Boolean {
+        if (board == null) return false
+        val tile = Tile(row, column)
+        //Verifies if the touch was supposed to select a piece
+        if (board!!.isSameArmy(tile)) {
+            val tempPiece = board!!.getPieceAtTile(tile)
+            if (currentPiece != tempPiece) {
+                currentPiece = tempPiece
+                currentPieceMoves = board!!.allLegalMoves(currentPiece!!)
+            }
+            return true
 
-    companion object {
-        val service = Retrofit.Builder()
-            .baseUrl("https://lichess.org/api/puzzle/daily")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(DailyPuzzleService::class.java)
+        }
+        return false
     }
 
-    val dailyPuzzle: LiveData<PuzzleInfo> = state.getLiveData(MAIN_ACTIVITY_VIEW_STATE)
-
-    fun getDailyPuzzle() {
-        service.getPuzzle().enqueue(object : Callback<PuzzleInfo> {
-            override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
-                //dailyPuzzle.value = response.body()
+        fun movePiece(row: Int, column: Int): Boolean {
+            if (board == null) return false
+            val tile = Tile(row, column)
+            //Verifies if the touch was supposed to move a piece
+            if (currentPiece != null) {
+                if (currentPieceMoves != null && currentPieceMoves!!.isNotEmpty()) {
+                    if (board!!.isAllowedToMove(tile, currentPieceMoves!!)) {
+                        board!!.makeMove(currentPiece!!, tile)
+                        currentPiece = null
+                        currentPieceMoves = null
+                        return true
+                    }
+                }
             }
+            return false
+        }
+        fun isEndOfGame(){
+            //TODO("Verify game-ending situations")
+            board!!.turnSwitch()
+        }
 
-            override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
-                Log.e("APP_TAG", "onFailure", t)
-            }
-        })
+
+        companion object {
+            val service = Retrofit.Builder()
+                .baseUrl("https://lichess.org/api/puzzle/daily")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(DailyPuzzleService::class.java)
+        }
+
+        //val dailyPuzzle: MutableLiveData<PuzzleInfo>()
+
+
+        fun getDailyPuzzle() {
+            service.getPuzzle().enqueue(object : Callback<PuzzleInfo> {
+                override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
+                    //dailyPuzzle.postValue(response.body())
+                }
+
+                override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
+                    Log.e("APP_TAG", "Request failed", t)
+                }
+            })
+        }
     }
-}

@@ -10,6 +10,8 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import pt.isel.pdm.chess4android.Army
 import pt.isel.pdm.chess4android.Piece
 import pt.isel.pdm.chess4android.R
+import pt.isel.pdm.chess4android.models.Board
+import pt.isel.pdm.chess4android.models.ChessPiece
 import pt.isel.pdm.chess4android.views.TileView.Type
 
 
@@ -20,7 +22,8 @@ typealias TileTouchListener = (tile: TileView, row: Int, column: Int) -> Unit
  */
 @SuppressLint("ClickableViewAccessibility")
 class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx, attrs) {
-
+    private var board: Board? = null
+    var tiles: Array<Array<TileView?>>? = null
     private val side = 8
 
     private val brush = Paint().apply {
@@ -28,6 +31,7 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
         style = Paint.Style.STROKE
         strokeWidth = 10F
     }
+
 
     private fun createImageEntry(army: Army, piece: Piece, imageId: Int) =
         Pair(Pair(army, piece), VectorDrawableCompat.create(ctx.resources, imageId, null))
@@ -63,6 +67,20 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
             addView(tile)
         }
     }
+    fun setBoard(board: Board){
+        tiles = Array(side) { i -> Array(8) { j -> null } }
+        this.board = board
+        var rowIdx: Int = 0
+        var columnIdx: Int = 0
+        for(row in board.board){
+            rowIdx++
+            for(piece in row){
+                tiles!![rowIdx][columnIdx++] = TileView(this.ctx,)
+            }
+
+        }
+    }
+
 
     var onTileClickedListener: TileTouchListener? = null
 
