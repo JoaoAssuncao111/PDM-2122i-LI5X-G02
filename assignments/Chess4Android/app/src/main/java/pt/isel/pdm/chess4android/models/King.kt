@@ -4,6 +4,7 @@ import pt.isel.pdm.chess4android.Army
 import java.util.*
 
 class King(army: Army, row: Int, collum: Int) : ChessPiece(army, row, collum) {
+    var isFirstMove: Boolean = true
     override fun myMoves(): EnumMap<Directions, List<Tile>> {
         var moves: EnumMap<Directions,List<Tile>> = EnumMap(Directions::class.java)
         moves[Directions.UP] = directionalMove(1,Directions.UP)

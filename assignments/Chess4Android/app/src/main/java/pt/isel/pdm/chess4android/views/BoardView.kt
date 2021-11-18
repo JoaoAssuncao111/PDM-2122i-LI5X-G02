@@ -64,11 +64,12 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
                 side,
                 piecesImages
             )
-            tile.setOnClickListener { onTileClickedListener?.invoke(tile, row, column) }
+            tile.setOnClickListener { onTileClickedListener?.invoke(tile, 7-row, column) }
             addView(tile)
-            tiles[row][column] = tile
+            tiles[7-row][column] = tile
         }
     }
+
     fun setBoard(board: Board){
         this.board = board
         repeat(side*side){
@@ -80,6 +81,17 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
 
     }
 
+    fun drawMove(tile: TileView){
+        val lastMove: Pair<Tile, ChessPiece> = board!!.lastMove!!
+        tiles[lastMove.first.row][lastMove.first.column]!!.piece = null
+        tiles[lastMove.second.row][lastMove.second.column]!!.piece = lastMove.second
+
+    }
+    fun highlightMoves(moves: List<Tile>, tile: TileView){
+        //for(tile in moves){
+            //tiles[tile.row][tile.column]!!.highlightTile()
+       // }
+    }
 
     var onTileClickedListener: TileTouchListener? = null
 

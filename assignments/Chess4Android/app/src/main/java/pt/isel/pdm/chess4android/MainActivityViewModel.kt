@@ -74,7 +74,7 @@ class MainActivityViewModel(
         }
         return false
     }
-
+        //returns true if move was successful
         fun movePiece(row: Int, column: Int): Boolean {
             if (board == null) return false
             val tile = Tile(row, column)

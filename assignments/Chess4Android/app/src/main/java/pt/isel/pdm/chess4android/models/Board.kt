@@ -53,8 +53,10 @@ class Board() {
                 if (piece is Pawn) {
                     //lets pawn move diagonally if there is an enemy piece there
                     if (key != Directions.UP && key != Directions.DOWN) {
-                        if (currentTilePiece != null && currentTilePiece.army != piece.army) currentPieceLegalMoves.add(tile)
-                    } else if (getPieceAtTile(tile) == null) currentPieceLegalMoves.add(tile)
+                        if (currentTilePiece != null && currentTilePiece.army != piece.army) currentPieceLegalMoves.add(
+                            tile
+                        )
+                    } else if (currentTilePiece == null) currentPieceLegalMoves.add(tile)
                     continue
                 }
                 //Stopping king from moving into a check position
@@ -74,12 +76,18 @@ class Board() {
         return currentPieceLegalMoves
     }
 
-    fun makeMove(piece: ChessPiece, goalTile: Tile){
-        lastMove = Pair(Tile(piece.row,piece.column),piece)
-        setPieceAtTile(goalTile,piece)
-        setPieceAtTile(Tile(piece.row,piece.column), null)
+    fun makeMove(piece: ChessPiece, goalTile: Tile) {
+        lastMove = Pair(Tile(piece.row, piece.column), piece)
+        setPieceAtTile(goalTile, piece)
+        setPieceAtTile(Tile(piece.row, piece.column), null)
         piece.column = goalTile.column
         piece.row = goalTile.row
+        when (piece) {
+            is Pawn -> piece.isFirstMove = false
+            is King -> piece.isFirstMove = false
+            is Rook -> piece.isFirstMove = false
+        }
+
     }
 
     //return whether or not a piece can stop the king from its army from being attacked
@@ -103,7 +111,7 @@ class Board() {
     }
 
     //Puts piece at designated position on board
-    fun setPieceAtTile(tile: Tile, piece: ChessPiece?){
+    fun setPieceAtTile(tile: Tile, piece: ChessPiece?) {
         board[tile.row][tile.column] = piece
     }
 
@@ -112,17 +120,17 @@ class Board() {
         return board[tile.row][tile.column]
     }
 
-    fun isSameArmy(tile: Tile): Boolean{
-        if(getPieceAtTile(tile)?.army != currentArmy) return false
+    fun isSameArmy(tile: Tile): Boolean {
+        if (getPieceAtTile(tile)?.army != currentArmy) return false
         return true
     }
 
-    fun isAllowedToMove(tile: Tile, legalMoves: List<Tile>): Boolean{
+    fun isAllowedToMove(tile: Tile, legalMoves: List<Tile>): Boolean {
         return legalMoves.contains(tile)
     }
 
-    fun turnSwitch(){
-        currentArmy = if(currentArmy == Army.WHITE) Army.BLACK else Army.WHITE
+    fun turnSwitch() {
+        currentArmy = if (currentArmy == Army.WHITE) Army.BLACK else Army.WHITE
     }
 
 

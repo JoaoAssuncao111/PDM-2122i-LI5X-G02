@@ -39,16 +39,25 @@ class TileView(
             invalidate()
         }
 
-    enum class Type { WHITE, BLACK }
 
+    private var highlight: Boolean = false
+    enum class Type { WHITE, BLACK}
+
+    private val highlightBrush = Paint().apply { color = ctx.resources.getColor(R.color.highlighted_chess_board_blue,null)}
+    //private checkBrush()
     private val brush = Paint().apply {
         color = ctx.resources.getColor(
             if (type == Type.WHITE) R.color.chess_board_white else R.color.chess_board_black,
-            null
-        )
+            null)
+
         style = Paint.Style.FILL_AND_STROKE
     }
 
+    fun highlightTile(){
+        highlight = true
+        invalidate()
+
+    }
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val side = Integer.min(
             MeasureSpec.getSize(widthMeasureSpec),
@@ -59,7 +68,7 @@ class TileView(
 
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
-        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), brush)
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), if(highlight) highlightBrush else brush)
         if (piece != null) {
             images[Pair(piece!!.army,piece!!::class)]?.apply {
                 val padding = 8

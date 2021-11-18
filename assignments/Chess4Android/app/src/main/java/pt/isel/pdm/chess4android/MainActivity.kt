@@ -51,18 +51,19 @@ class MainActivity : AppCompatActivity() {
                 TODO()
             }
         })
+        */
 
         binding.boardView.onTileClickedListener = { tile: TileView, row: Int, column: Int ->
+            //var convertedRow = 7 - row
             var currentPiece = viewModel.currentPiece
             //Was a piece from the current army pressed
             if (viewModel.selectPiece(row, column)) {
                 if (currentPiece != viewModel.currentPiece) {
-                    TODO()
+                    viewModel.currentPieceMoves?.let { binding.boardView.highlightMoves(it,tile) }
                 }
             } else {
                     if(viewModel.movePiece(row,column)) //board view update
-                        TODO()
-
+                        binding.boardView.drawMove(tile)
             }
         }
 
@@ -75,6 +76,6 @@ class MainActivity : AppCompatActivity() {
         //Called when an option in the menu is selected
         fun onOptionsItemSelected(item: MenuItem): Boolean {
             return super.onOptionsItemSelected(item)
-        } */
+        }
     }
 }
