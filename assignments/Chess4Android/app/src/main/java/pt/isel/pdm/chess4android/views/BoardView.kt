@@ -8,11 +8,11 @@ import android.util.AttributeSet
 import android.widget.GridLayout
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import pt.isel.pdm.chess4android.Army
-import pt.isel.pdm.chess4android.Piece
 import pt.isel.pdm.chess4android.R
-import pt.isel.pdm.chess4android.models.Board
-import pt.isel.pdm.chess4android.models.ChessPiece
+import pt.isel.pdm.chess4android.models.*
 import pt.isel.pdm.chess4android.views.TileView.Type
+import kotlin.reflect.KClass
+
 
 
 typealias TileTouchListener = (tile: TileView, row: Int, column: Int) -> Unit
@@ -23,7 +23,7 @@ typealias TileTouchListener = (tile: TileView, row: Int, column: Int) -> Unit
 @SuppressLint("ClickableViewAccessibility")
 class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx, attrs) {
     private var board: Board? = null
-    var tiles: Array<Array<TileView?>>? = null
+    private val tiles: Array<Array<TileView?>>
     private val side = 8
 
     private val brush = Paint().apply {
@@ -33,25 +33,26 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
     }
 
 
-    private fun createImageEntry(army: Army, piece: Piece, imageId: Int) =
+    private fun createImageEntry(army: Army, piece: KClass<*>, imageId: Int) =
         Pair(Pair(army, piece), VectorDrawableCompat.create(ctx.resources, imageId, null))
 
     private val piecesImages = mapOf(
-        createImageEntry(Army.WHITE, Piece.PAWN, R.drawable.ic_white_pawn),
-        createImageEntry(Army.WHITE, Piece.KNIGHT, R.drawable.ic_white_knight),
-        createImageEntry(Army.WHITE, Piece.BISHOP, R.drawable.ic_white_bishop),
-        createImageEntry(Army.WHITE, Piece.ROOK, R.drawable.ic_white_rook),
-        createImageEntry(Army.WHITE, Piece.QUEEN, R.drawable.ic_white_queen),
-        createImageEntry(Army.WHITE, Piece.KING, R.drawable.ic_white_king),
-        createImageEntry(Army.BLACK, Piece.PAWN, R.drawable.ic_black_pawn),
-        createImageEntry(Army.BLACK, Piece.KNIGHT, R.drawable.ic_black_knight),
-        createImageEntry(Army.BLACK, Piece.BISHOP, R.drawable.ic_black_bishop),
-        createImageEntry(Army.BLACK, Piece.ROOK, R.drawable.ic_black_rook),
-        createImageEntry(Army.BLACK, Piece.QUEEN, R.drawable.ic_black_queen),
-        createImageEntry(Army.BLACK, Piece.KING, R.drawable.ic_black_king),
+        createImageEntry(Army.WHITE, Pawn::class, R.drawable.ic_white_pawn),
+        createImageEntry(Army.WHITE, Knight::class, R.drawable.ic_white_knight),
+        createImageEntry(Army.WHITE, Bishop::class, R.drawable.ic_white_bishop),
+        createImageEntry(Army.WHITE, Rook::class, R.drawable.ic_white_rook),
+        createImageEntry(Army.WHITE, Queen::class, R.drawable.ic_white_queen),
+        createImageEntry(Army.WHITE, King::class, R.drawable.ic_white_king),
+        createImageEntry(Army.BLACK, Pawn::class, R.drawable.ic_black_pawn),
+        createImageEntry(Army.BLACK, Knight::class, R.drawable.ic_black_knight),
+        createImageEntry(Army.BLACK, Bishop::class, R.drawable.ic_black_bishop),
+        createImageEntry(Army.BLACK, Rook::class, R.drawable.ic_black_rook),
+        createImageEntry(Army.BLACK, Queen::class, R.drawable.ic_black_queen),
+        createImageEntry(Army.BLACK, King::class, R.drawable.ic_black_king),
     )
 
     init {
+        tiles = Array(side) { Array(8) { null } }
         rowCount = side
         columnCount = side
         repeat(side * side) {
@@ -65,20 +66,18 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
             )
             tile.setOnClickListener { onTileClickedListener?.invoke(tile, row, column) }
             addView(tile)
+            tiles[row][column] = tile
         }
     }
     fun setBoard(board: Board){
-        tiles = Array(side) { i -> Array(8) { j -> null } }
         this.board = board
-        var rowIdx: Int = 0
-        var columnIdx: Int = 0
-        for(row in board.board){
-            rowIdx++
-            for(piece in row){
-                tiles!![rowIdx][columnIdx++] = TileView(this.ctx,)
-            }
-
+        repeat(side*side){
+            val row = it / side
+            val column = it % side
+            val piece = board.getPieceAtTile(Tile(row,column))
+            if(piece != null) tiles[row][column]!!.piece = piece
         }
+
     }
 
 

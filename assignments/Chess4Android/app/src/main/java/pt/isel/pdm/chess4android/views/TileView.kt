@@ -9,6 +9,8 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import pt.isel.pdm.chess4android.Army
 import pt.isel.pdm.chess4android.Piece
 import pt.isel.pdm.chess4android.R
+import pt.isel.pdm.chess4android.models.ChessPiece
+import kotlin.reflect.KClass
 
 /**
  * Custom view that implements a chess board tile.
@@ -27,11 +29,11 @@ class TileView(
     private val ctx: Context,
     private val type: Type,
     private val tilesPerSide: Int,
-    private val images: Map<Pair<Army, Piece>, VectorDrawableCompat?>,
-    initialPiece: Pair<Army, Piece>? = null,
+    private val images: Map<Pair<Army, KClass<*>>, VectorDrawableCompat?>,
+    initialPiece: ChessPiece? = null,
 ) : View(ctx) {
 
-    var piece: Pair<Army, Piece>? = initialPiece
+    var piece: ChessPiece? = initialPiece
         set(value) {
             field = value
             invalidate()
@@ -55,10 +57,11 @@ class TileView(
         setMeasuredDimension(side / tilesPerSide, side / tilesPerSide)
     }
 
+    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), brush)
         if (piece != null) {
-            images[piece]?.apply {
+            images[Pair(piece!!.army,piece!!::class)]?.apply {
                 val padding = 8
                 setBounds(padding, padding, width-padding, height-padding)
                 draw(canvas)

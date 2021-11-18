@@ -19,26 +19,26 @@ class Board() {
 
     fun startGame() {
         for (i in 0 until 2) {
-            addToBoard(Rook(Army.WHITE, 1, 1 + i * 7))
-            addToBoard(Rook(Army.BLACK, 8, 1 + i * 7))
-            addToBoard(Knight(Army.WHITE, 1, 2 + i * 5))
-            addToBoard(Knight(Army.BLACK, 8, 2 + i * 5))
-            addToBoard(Bishop(Army.WHITE, 1, 3 + i * 3))
-            addToBoard(Bishop(Army.BLACK, 8, 3 + i * 3))
+            addToBoard(Rook(Army.WHITE, 0, 0 + i * 7))
+            addToBoard(Rook(Army.BLACK, 7, 0 + i * 7))
+            addToBoard(Knight(Army.WHITE, 0, 1 + i * 5))
+            addToBoard(Knight(Army.BLACK, 7, 1 + i * 5))
+            addToBoard(Bishop(Army.WHITE, 0, 2 + i * 3))
+            addToBoard(Bishop(Army.BLACK, 7, 2 + i * 3))
         }
-        for (i in 1 until 9) {
-            addToBoard(Pawn(Army.WHITE, 2, i))
-            addToBoard(Pawn(Army.BLACK, 7, i))
+        for (i in 0 until 8) {
+            addToBoard(Pawn(Army.WHITE, 1, i))
+            addToBoard(Pawn(Army.BLACK, 6, i))
         }
 
-        whiteKing = King(Army.WHITE, 1, 4)
-        blackKing = King(Army.BLACK, 8, 4)
+        whiteKing = King(Army.WHITE, 0, 3)
+        blackKing = King(Army.BLACK, 7, 3)
 
         whiteKing?.let { addToBoard(it) }
         blackKing?.let { addToBoard(it) }
 
-        addToBoard(Queen(Army.WHITE, 1, 5))
-        addToBoard(Queen(Army.BLACK, 1, 5))
+        addToBoard(Queen(Army.WHITE, 0, 4))
+        addToBoard(Queen(Army.BLACK, 7, 4))
 
     }
 
@@ -124,5 +124,6 @@ class Board() {
     fun turnSwitch(){
         currentArmy = if(currentArmy == Army.WHITE) Army.BLACK else Army.WHITE
     }
+
 
 }

@@ -54,10 +54,11 @@ class MainActivity : AppCompatActivity() {
             //Was a piece from the current army pressed
             if (viewModel.selectPiece(row, column)) {
                 if (currentPiece != viewModel.currentPiece) {
-                    //board view
+                    TODO()
                 }
             } else {
                     if(viewModel.movePiece(row,column)) //board view update
+                        TODO()
 
             }
         }
