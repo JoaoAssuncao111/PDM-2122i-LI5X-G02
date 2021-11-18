@@ -31,14 +31,14 @@ class Board() {
             addToBoard(Pawn(Army.BLACK, 6, i))
         }
 
-        whiteKing = King(Army.WHITE, 0, 3)
-        blackKing = King(Army.BLACK, 7, 3)
+        whiteKing = King(Army.WHITE, 0, 4)
+        blackKing = King(Army.BLACK, 7, 4)
 
         whiteKing?.let { addToBoard(it) }
         blackKing?.let { addToBoard(it) }
 
-        addToBoard(Queen(Army.WHITE, 0, 4))
-        addToBoard(Queen(Army.BLACK, 7, 4))
+        addToBoard(Queen(Army.WHITE, 0, 3))
+        addToBoard(Queen(Army.BLACK, 7, 3))
 
     }
 

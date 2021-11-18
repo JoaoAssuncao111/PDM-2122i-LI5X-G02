@@ -25,6 +25,7 @@ class MainActivityViewModel(
 
     init {
         board = Board()
+        board!!.startGame()
         Log.v("APP_TAG", "MainActivityViewModel.init()")
 
     }
@@ -96,7 +97,7 @@ class MainActivityViewModel(
         }
 
 
-        companion object {
+       /* companion object {
             val service = Retrofit.Builder()
                 .baseUrl("https://lichess.org/api/puzzle/daily")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -104,10 +105,12 @@ class MainActivityViewModel(
                 .create(DailyPuzzleService::class.java)
         }
 
+        */
+
         //val dailyPuzzle: MutableLiveData<PuzzleInfo>()
 
 
-        fun getDailyPuzzle() {
+        /*fun getDailyPuzzle() {
             service.getPuzzle().enqueue(object : Callback<PuzzleInfo> {
                 override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
                     //dailyPuzzle.postValue(response.body())
@@ -118,4 +121,6 @@ class MainActivityViewModel(
                 }
             })
         }
+
+         */
     }

@@ -36,16 +36,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding.boardView.setBoard(viewModel.board!!)
         setContentView(binding.root)
-        val call = dailyPuzzleService.getPuzzle()
+
+        //val call = dailyPuzzleService.getPuzzle()
         //viewModel.dailyPuzzle.observe(this) {}
 
-        call.enqueue(object : Callback<PuzzleInfo> {
+        /* call.enqueue(object : Callback<PuzzleInfo> {
             override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
-                val game = response.body()?.game
+            TODO()
+            //val game = response.body()?.game
 
             }
 
             override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
+                TODO()
             }
         })
 
@@ -72,6 +75,6 @@ class MainActivity : AppCompatActivity() {
         //Called when an option in the menu is selected
         fun onOptionsItemSelected(item: MenuItem): Boolean {
             return super.onOptionsItemSelected(item)
-        }
+        } */
     }
 }
