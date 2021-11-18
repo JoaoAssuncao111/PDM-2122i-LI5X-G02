@@ -1,8 +1,10 @@
 package pt.isel.pdm.chess4android
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import pt.isel.pdm.chess4android.databinding.ActivityMainBinding
@@ -46,7 +48,6 @@ class MainActivity : AppCompatActivity() {
             //val game = response.body()?.game
 
             }
-
             override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
                 TODO()
             }
@@ -67,15 +68,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //Called when menu is created
-        fun onCreateOptionsMenu(menu: Menu?): Boolean {
-            return super.onCreateOptionsMenu(menu)
-
+        findViewById<Button>(R.id.about_button).setOnClickListener{
+            startActivity(Intent(this,AboutActivity::class.java))
         }
 
-        //Called when an option in the menu is selected
-        fun onOptionsItemSelected(item: MenuItem): Boolean {
-            return super.onOptionsItemSelected(item)
-        }
     }
+
 }

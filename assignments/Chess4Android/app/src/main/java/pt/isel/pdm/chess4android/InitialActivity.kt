@@ -6,16 +6,16 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 
-class IniActivity : AppCompatActivity() {
+class InitialActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_initial)
 
-        val call = dailyPuzzleService.getPuzzle()
+        //val call = dailyPuzzleService.getPuzzle()
 
         findViewById<Button>(R.id.fetch_button).setOnClickListener {
-
+            startActivity(Intent(this,MainActivity::class.java))
             }
-            startActivity(intent)
+
         }
     }

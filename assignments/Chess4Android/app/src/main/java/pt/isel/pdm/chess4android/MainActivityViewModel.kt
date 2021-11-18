@@ -102,7 +102,7 @@ class MainActivityViewModel(
                 .baseUrl("https://lichess.org/api/puzzle/daily")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(DailyPuzzleService::class.java)
+                .create(LichessAPI::class.java)
         }
 
         */
