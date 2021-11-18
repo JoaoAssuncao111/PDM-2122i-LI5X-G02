@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">ChessRoyale</string>
     <string name="fetch_button_text">Obter puzzle do dia</string>
+    <string name="fetching_puzzle">A obter o puzzle diário...</string>
 </resources>
