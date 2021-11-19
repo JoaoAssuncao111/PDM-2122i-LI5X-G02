@@ -68,6 +68,7 @@ class TileView(
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), if(highlight) highlightBrush else brush)
+        if(highlight) highlight = false;
         if (piece != null) {
             images[Pair(piece!!.army,piece!!::class)]?.apply {
                 val padding = 8

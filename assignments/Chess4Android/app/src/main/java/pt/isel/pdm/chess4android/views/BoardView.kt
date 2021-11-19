@@ -24,6 +24,7 @@ typealias TileTouchListener = (tile: TileView, row: Int, column: Int) -> Unit
 class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx, attrs) {
     private var board: Board? = null
     private val tiles: Array<Array<TileView?>>
+    private var highlightedTiles: List<TileView>? = null
     private val side = 8
 
     private val brush = Paint().apply {
@@ -82,15 +83,29 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
     }
 
     fun drawMove(tile: TileView){
+        if(highlightedTiles != null) removeHighlights()
         val lastMove: Pair<Tile, ChessPiece> = board!!.lastMove!!
         tiles[lastMove.first.row][lastMove.first.column]!!.piece = null
         tiles[lastMove.second.row][lastMove.second.column]!!.piece = lastMove.second
 
     }
     fun highlightMoves(moves: List<Tile>, tile: TileView){
-        //for(tile in moves){
-            //tiles[tile.row][tile.column]!!.highlightTile()
-       // }
+        if(highlightedTiles != null) removeHighlights()
+        if(moves.isEmpty()) return
+        val highlights = mutableListOf<TileView>();
+        for(tile in moves){
+            val temp = tiles[tile.row][tile.column]!!;
+            temp.highlightTile()
+            highlights.add(temp)
+        }
+        highlightedTiles = highlights;
+    }
+
+    private fun removeHighlights(){
+        for(tile in highlightedTiles!!){
+            tile.invalidate()
+        }
+        highlightedTiles = null
     }
 
     var onTileClickedListener: TileTouchListener? = null

@@ -57,6 +57,7 @@ class Board() {
                             tile
                         )
                     } else if (currentTilePiece == null) currentPieceLegalMoves.add(tile)
+                    else break;
                     continue
                 }
                 //Stopping king from moving into a check position
@@ -87,7 +88,7 @@ class Board() {
             is King -> piece.isFirstMove = false
             is Rook -> piece.isFirstMove = false
         }
-
+        currentArmy = if(currentArmy == Army.WHITE) Army.BLACK else Army.WHITE
     }
 
     //return whether or not a piece can stop the king from its army from being attacked
