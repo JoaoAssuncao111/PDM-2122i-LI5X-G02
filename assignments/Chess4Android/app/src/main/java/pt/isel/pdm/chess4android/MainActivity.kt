@@ -2,6 +2,7 @@ package pt.isel.pdm.chess4android
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -31,28 +32,16 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
+        intent.getParcelableExtra<Parcelable>("Board")
         super.onCreate(savedInstanceState)
         binding.boardView.setBoard(viewModel.board!!)
         setContentView(binding.root)
 
-        //val call = dailyPuzzleService.getPuzzle()
-        //viewModel.dailyPuzzle.observe(this) {}
-
-        /* call.enqueue(object : Callback<PuzzleInfo> {
-            override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
-            TODO()
-            //val game = response.body()?.game
-
-            }
-            override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
-                TODO()
-            }
-        })
-        */
 
         binding.boardView.onTileClickedListener = { tile: TileView, row: Int, column: Int ->
             //var convertedRow = 7 - row

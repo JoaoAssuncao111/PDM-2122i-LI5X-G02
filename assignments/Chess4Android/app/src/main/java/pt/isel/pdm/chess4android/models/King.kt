@@ -15,6 +15,8 @@ class King(army: Army, row: Int, collum: Int) : ChessPiece(army, row, collum) {
         moves[Directions.DOWN_LEFT] = directionalMove(1,Directions.DOWN_LEFT)
         moves[Directions.LEFT] = directionalMove(1,Directions.LEFT)
         moves[Directions.UP_LEFT] = directionalMove(1,Directions.UP_LEFT)
+        moves[Directions.CASTLING_RIGHT] = directionalMove(1,Directions.CASTLING_RIGHT)
+        moves[Directions.CASTLING_LEFT] = directionalMove(1,Directions.CASTLING_LEFT)
         return moves
     }
 }
