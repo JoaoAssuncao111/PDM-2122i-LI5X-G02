@@ -2,4 +2,7 @@
     <string name="app_name">ChessRoyale</string>
     <string name="fetch_button_text">Get daily puzzle</string>
     <string name="fetching_puzzle">Fetching daily puzzle…</string>
+    <string name="dev_names" translatable="false">47181 João Assunção\n47218 Pedro Gardete\n47262 Francisco Ludovico</string>
+    <string name="puzzle_src">Puzzles source:</string>
+    <string name="lichess_link" translatable="false">https://lichess.org/api</string>
 </resources>

@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.view.View
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import pt.isel.pdm.chess4android.Army
-import pt.isel.pdm.chess4android.Piece
 import pt.isel.pdm.chess4android.R
 import pt.isel.pdm.chess4android.models.ChessPiece
 import kotlin.reflect.KClass
