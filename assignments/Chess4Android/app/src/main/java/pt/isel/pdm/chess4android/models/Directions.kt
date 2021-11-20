@@ -17,8 +17,8 @@ enum class Directions (val row: Int, val column: Int){
     KNIGHT_RIGHT_DOWN(-1,2),
     KNIGHT_DOWN_RIGHT(-2,1),
     KNIGHT_DOWN_LEFT(-2,-1),
-    CASTLING_LEFT(0,-4),
-    CASTLING_RIGHT(0,3),
+    CASTLING_LEFT(0,-2),
+    CASTLING_RIGHT(0,2),
 
 }
 

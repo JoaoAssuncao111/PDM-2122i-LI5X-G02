@@ -25,26 +25,33 @@ class MainActivity : AppCompatActivity() {
 
         intent.getParcelableExtra<Parcelable>("Board")
         super.onCreate(savedInstanceState)
-        binding.boardView.setBoard(viewModel.board!!)
-        setContentView(binding.root)
+        viewModel.getDailyPuzzle()
 
 
-        binding.boardView.onTileClickedListener = { tile: TileView, row: Int, column: Int ->
-            //var convertedRow = 7 - row
-            var currentPiece = viewModel.currentPiece
-            //Was a piece from the current army pressed
-            if (viewModel.selectPiece(row, column)) {
-                if (currentPiece != viewModel.currentPiece) {
-                    viewModel.currentPieceMoves?.let { binding.boardView.highlightMoves(it,tile) }
-                }
-            } else {
+        viewModel.dailyPuzzle.observe(this) {
+            binding.boardView.setBoard(viewModel.board!!)
+            setContentView(binding.root)
+
+            binding.boardView.onTileClickedListener = { tile: TileView, row: Int, column: Int ->
+                //var convertedRow = 7 - row
+                var currentPiece = viewModel.currentPiece
+                //Was a piece from the current army pressed
+                if (viewModel.selectPiece(row, column)) {
+                    if (currentPiece != viewModel.currentPiece) {
+                        viewModel.currentPieceMoves?.let { binding.boardView.highlightMoves(it,tile) }
+                    }
+                } else {
                     if(viewModel.movePiece(row,column))
                         binding.boardView.drawMove(tile)
+                }
             }
-        }
 
-        findViewById<Button>(R.id.about_button).setOnClickListener{
-            startActivity(Intent(this,AboutActivity::class.java))
+
+
+            findViewById<Button>(R.id.about_button).setOnClickListener{
+                startActivity(Intent(this,AboutActivity::class.java))
+            }
+
         }
 
     }

@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.widget.GridLayout
+import androidx.core.view.size
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import pt.isel.pdm.chess4android.Army
 import pt.isel.pdm.chess4android.R
@@ -84,7 +85,16 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
 
     fun drawMove(tile: TileView){
         if(highlightedTiles != null) removeHighlights()
-        val lastMove: Pair<Tile, ChessPiece> = board!!.lastMove!!
+        val lastMove: Pair<Tile, ChessPiece> = board!!.lastMoves[board!!.lastMoves.size-1]!!
+        if(lastMove.second is King){
+            val secondLastMove = board!!.lastMoves[board!!.lastMoves.size-2]
+            if(secondLastMove!!.second is Rook && secondLastMove.second.army == lastMove.second.army){
+                val secondLastMoveTile = Tile(secondLastMove.second.row,secondLastMove.second.column)
+                board!!.lastMoves.removeLast()
+                drawMove(tiles[secondLastMoveTile.row][secondLastMoveTile.column]!!)
+                board!!.lastMoves.add(lastMove)
+            }
+        }
         tiles[lastMove.first.row][lastMove.first.column]!!.piece = null
         tiles[lastMove.second.row][lastMove.second.column]!!.piece = lastMove.second
 

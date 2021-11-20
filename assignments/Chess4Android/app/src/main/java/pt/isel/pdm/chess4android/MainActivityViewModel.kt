@@ -12,6 +12,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+private const val MAIN_ACTIVITY_VIEW_STATE = "MainActivity.ViewState"
+
 class MainActivityViewModel(
     application: Application,
     private val state: SavedStateHandle
@@ -31,7 +33,7 @@ class MainActivityViewModel(
 
     companion object {
         val service: DailyPuzzleService = Retrofit.Builder()
-            .baseUrl("https://lichess.org/api/puzzle/daily/")
+            .baseUrl("https://lichess.org/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(DailyPuzzleService::class.java)
@@ -44,8 +46,11 @@ class MainActivityViewModel(
     fun getDailyPuzzle() {
         service.getPuzzle().enqueue(object : Callback<PuzzleInfo> {
             override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
-                board!!.decodePgn(response.body()!!.game.pgn)
-                dailyPuzzle.postValue(response.body())
+                if (response.body() != null && response.isSuccessful) {
+                    board!!.decodePgn(response.body()!!.game.pgn)
+                    dailyPuzzle.postValue(response.body())
+                    //state.set(MAIN_ACTIVITY_VIEW_STATE, response.body())
+                }
             }
 
             override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
@@ -54,33 +59,6 @@ class MainActivityViewModel(
         })
     }
 
-    fun checkBoardOnClick(row: Int, column: Int) {
-        if (board == null) return
-        val tile = Tile(row, column)
-        //Verifies if the touch was supposed to select a piece
-        if (board!!.isSameArmy(tile)) {
-            val tempPiece = board!!.getPieceAtTile(tile)
-            if (currentPiece != tempPiece) {
-                currentPiece = tempPiece
-                currentPieceMoves = board!!.allLegalMoves(currentPiece!!)
-            }
-            //Verifies if the touch was supposed to move a piece
-        } else if (currentPiece != null) {
-            if (currentPieceMoves != null && currentPieceMoves!!.isNotEmpty()) {
-                if (board!!.isAllowedToMove(tile, currentPieceMoves!!)) {
-                    board!!.makeMove(currentPiece!!, tile)
-                    currentPiece = null
-                    currentPieceMoves = null
-                    //TODO("Verify game-ending situations")
-                    board!!.switchTurns()
-                    //post value board live data
-
-                }
-            }
-        }
-
-
-    }
 
     fun selectPiece(row: Int, column: Int): Boolean {
         if (board == null) return false
@@ -97,28 +75,29 @@ class MainActivityViewModel(
         }
         return false
     }
-        //returns true if move was successful
-        fun movePiece(row: Int, column: Int): Boolean {
-            if (board == null) return false
-            val tile = Tile(row, column)
-            //Verifies if the touch was supposed to move a piece
-            if (currentPiece != null) {
-                if (currentPieceMoves != null && currentPieceMoves!!.isNotEmpty()) {
-                    if (board!!.isAllowedToMove(tile, currentPieceMoves!!)) {
-                        board!!.makeMove(currentPiece!!, tile)
-                        currentPiece = null
-                        currentPieceMoves = null
-                        return true
-                    }
+
+    //returns true if move was successful
+    fun movePiece(row: Int, column: Int): Boolean {
+        if (board == null) return false
+        val tile = Tile(row, column)
+        //Verifies if the touch was supposed to move a piece
+        if (currentPiece != null) {
+            if (currentPieceMoves != null && currentPieceMoves!!.isNotEmpty()) {
+                if (board!!.isAllowedToMove(tile, currentPieceMoves!!)) {
+                    board!!.makeMove(currentPiece!!, tile)
+                    currentPiece = null
+                    currentPieceMoves = null
+                    return true
                 }
             }
-            return false
         }
-        fun isEndOfGame(){
-            //TODO("Verify game-ending situations")
-            board!!.switchTurns()
-        }
-
-
-
+        return false
     }
+
+    fun isEndOfGame() {
+        //TODO("Verify game-ending situations")
+        board!!.switchTurns()
+    }
+
+
+}
