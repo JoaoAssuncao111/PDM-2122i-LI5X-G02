@@ -12,8 +12,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val MAIN_ACTIVITY_VIEW_STATE = "MainActivity.ViewState"
-
 class MainActivityViewModel(
     application: Application,
     private val state: SavedStateHandle
@@ -26,10 +24,35 @@ class MainActivityViewModel(
     init {
         board = Board()
         board!!.startGame()
+
         Log.v("APP_TAG", "MainActivityViewModel.init()")
 
     }
 
+    companion object {
+        val service: DailyPuzzleService = Retrofit.Builder()
+            .baseUrl("https://lichess.org/api/puzzle/daily/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(DailyPuzzleService::class.java)
+    }
+
+
+    val dailyPuzzle: MutableLiveData<PuzzleInfo> = MutableLiveData()
+
+
+    fun getDailyPuzzle() {
+        service.getPuzzle().enqueue(object : Callback<PuzzleInfo> {
+            override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
+                board!!.decodePgn(response.body()!!.game.pgn)
+                dailyPuzzle.postValue(response.body())
+            }
+
+            override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
+                Log.e("APP_TAG", "Request failed", t)
+            }
+        })
+    }
 
     fun checkBoardOnClick(row: Int, column: Int) {
         if (board == null) return
@@ -49,7 +72,7 @@ class MainActivityViewModel(
                     currentPiece = null
                     currentPieceMoves = null
                     //TODO("Verify game-ending situations")
-                    board!!.turnSwitch()
+                    board!!.switchTurns()
                     //post value board live data
 
                 }
@@ -93,7 +116,7 @@ class MainActivityViewModel(
         }
         fun isEndOfGame(){
             //TODO("Verify game-ending situations")
-            board!!.turnSwitch()
+            board!!.switchTurns()
         }
 
 

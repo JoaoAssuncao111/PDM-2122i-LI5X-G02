@@ -1,6 +1,8 @@
 package pt.isel.pdm.chess4android.models
 
 import pt.isel.pdm.chess4android.Army
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 
 class Board() {
@@ -88,7 +90,7 @@ class Board() {
             is King -> piece.isFirstMove = false
             is Rook -> piece.isFirstMove = false
         }
-        currentArmy = if(currentArmy == Army.WHITE) Army.BLACK else Army.WHITE
+        switchTurns()
     }
 
     //return whether or not a piece can stop the king from its army from being attacked
@@ -111,6 +113,43 @@ class Board() {
         return piecesThatCheck
     }
 
+    fun decodePgn(pgn: String) {
+        var movesToMake: List<String> = pgn.split(" ")
+        for (string in movesToMake) {
+            val length: Int = string.length
+            string.replace("+", "")
+            string.replace("x", "")
+            val goalTile: Tile = Tile(
+                string[length - 1].digitToInt() - 1,
+                Character.getNumericValue(string[length - 2])
+            )
+            string.drop(2)
+            // if move had only goalTile
+            if (string.isEmpty()) moveByType(string, null, null, goalTile)
+
+            //if move had type of piece to be moved
+            if (string.length == 1) {
+                if (string[0].isUpperCase()) {
+                    moveByType(string, null, null, goalTile)
+                } else moveByType("", string[0], null, goalTile)
+              //if move had type and column of piece to be moved
+            } else if (string.length == 2) {
+                moveByType(string[0].toString(), string[1], null, goalTile)
+                //if move had type, column and row of piece to be moved
+            } else if (string.length == 3) {
+                moveByType(string[0].toString(),string[1],string[2],goalTile)
+            }
+
+        }
+
+
+    }
+
+    fun moveByType(string: String, column: Char?, row: Char?, tile: Tile) {
+
+
+    }
+
     //Puts piece at designated position on board
     fun setPieceAtTile(tile: Tile, piece: ChessPiece?) {
         board[tile.row][tile.column] = piece
@@ -130,7 +169,7 @@ class Board() {
         return legalMoves.contains(tile)
     }
 
-    fun turnSwitch() {
+    fun switchTurns() {
         currentArmy = if (currentArmy == Army.WHITE) Army.BLACK else Army.WHITE
     }
 
