@@ -83,15 +83,14 @@ class BoardView(private val ctx: Context, attrs: AttributeSet?) : GridLayout(ctx
 
     }
 
-    fun drawMove(tile: TileView){
+    fun drawMove(){
         if(highlightedTiles != null) removeHighlights()
         val lastMove: Pair<Tile, ChessPiece> = board!!.lastMoves[board!!.lastMoves.size-1]!!
         if(lastMove.second is King){
             val secondLastMove = board!!.lastMoves[board!!.lastMoves.size-2]
             if(secondLastMove!!.second is Rook && secondLastMove.second.army == lastMove.second.army){
-                val secondLastMoveTile = Tile(secondLastMove.second.row,secondLastMove.second.column)
                 board!!.lastMoves.removeLast()
-                drawMove(tiles[secondLastMoveTile.row][secondLastMoveTile.column]!!)
+                drawMove()
                 board!!.lastMoves.add(lastMove)
             }
         }

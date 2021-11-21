@@ -45,11 +45,15 @@ class MainActivityViewModel(
         service.getPuzzle().enqueue(object : Callback<PuzzleInfo> {
             override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
                 if (response.body() != null && response.isSuccessful) {
-                    board!!.decodePgn(response.body()!!.game.pgn)
+                    board!!.setupPuzzle(
+                        response.body()!!.game.pgn,
+                        response.body()!!.puzzle.solution
+                    )
                     dailyPuzzle.postValue(response.body())
                     //state.set(MAIN_ACTIVITY_VIEW_STATE, response.body())
                 }
             }
+
             override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
                 Log.e("APP_TAG", "Request failed", t)
             }
@@ -58,7 +62,7 @@ class MainActivityViewModel(
 
 
     fun selectPiece(row: Int, column: Int): Boolean {
-        if (board == null) return false
+        if (board == null || board!!.isPuzzleCompleted) return false
         val tile = Tile(row, column)
         //Verifies if the touch was supposed to select a piece
         if (board!!.isSameArmy(tile)) {
@@ -74,27 +78,40 @@ class MainActivityViewModel(
 
     //returns true if move was successful
     fun movePiece(row: Int, column: Int): Boolean {
-        if (board == null) return false
+        if (board == null || board!!.isPuzzleCompleted) return false
         val tile = Tile(row, column)
         //Verifies if the touch was supposed to move a piece
         if (currentPiece != null) {
             if (currentPieceMoves != null && currentPieceMoves!!.isNotEmpty()) {
                 if (board!!.isAllowedToMove(tile, currentPieceMoves!!)) {
-                    board!!.makeMove(currentPiece!!, tile)
-                    currentPiece = null
-                    currentPieceMoves = null
-                    board!!.switchTurns()
-                    return true
+                    if (board!!.makeMove(currentPiece!!, tile)) {
+                        currentPiece = null
+                        currentPieceMoves = null
+                        board!!.switchTurns()
+                        return true
+                    }
                 }
             }
         }
         return false
     }
 
-    fun isEndOfGame() {
-        //TODO("Verify game-ending situations")
-        board!!.switchTurns()
+    fun makeMoveIfPuzzle(): Boolean {
+        if (board!!.puzzleSolution != null && board!!.puzzleSolution!!.isNotEmpty()) {
+            val pair = board!!.puzzleSolution!!.first()
+            val piece = board!!.getPieceAtTile(pair.first)
+            board!!.makeMove(piece!!, pair.second)
+            board!!.switchTurns()
+            return true
+        }
+        return false
     }
 
 
-}
+        fun isEndOfGame() {
+            //TODO("Verify game-ending situations")
+            board!!.switchTurns()
+        }
+
+
+    }

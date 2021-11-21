@@ -40,10 +40,7 @@ class MainActivity : AppCompatActivity() {
             findViewById<Button>(R.id.about_button).setOnClickListener{
                 startActivity(newIntent)
             }
-
-
         }
-
 
     }
 
@@ -65,8 +62,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                if (viewModel.movePiece(row, column))
-                    binding.boardView.drawMove(tile)
+                if (viewModel.movePiece(row, column)) {
+                    binding.boardView.drawMove()
+                    if(viewModel.makeMoveIfPuzzle()){
+                        binding.boardView.drawMove()
+                    }
+                }
+
             }
         }
 

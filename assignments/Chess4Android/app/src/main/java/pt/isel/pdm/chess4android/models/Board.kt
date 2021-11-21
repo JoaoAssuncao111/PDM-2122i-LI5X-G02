@@ -1,20 +1,17 @@
 package pt.isel.pdm.chess4android.models
 
 import pt.isel.pdm.chess4android.Army
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
-
 
 class Board() {
     private val side: Int = 8
 
-
+    var puzzleSolution: MutableList<Pair<Tile,Tile>>? = null
+    var isPuzzleCompleted = false
     var whiteKing: ChessPiece? = null
     var blackKing: ChessPiece? = null
     var currentArmy: Army = Army.WHITE
     var lastMoves: MutableList<Pair<Tile, ChessPiece>?> = mutableListOf()
     var board = Array<Array<ChessPiece?>>(side) { i -> Array(8) { j -> null } }
-
     private fun addToBoard(p: ChessPiece) {
         board[p.row][p.column] = p
     }
@@ -91,7 +88,14 @@ class Board() {
         return currentPieceLegalMoves
     }
 
-    fun makeMove(piece: ChessPiece, goalTile: Tile) {
+    fun makeMove(piece: ChessPiece, goalTile: Tile): Boolean {
+        if(puzzleSolution != null){
+            val pair = puzzleSolution!![0]
+            if(Tile(piece.row,piece.column) != pair.first || goalTile != pair.second) return false
+            puzzleSolution!!.removeFirst()
+            if(puzzleSolution!!.isEmpty()) isPuzzleCompleted = true
+        }
+
         if (piece is King && piece.isFirstMove) {
             if (goalTile == Tile(piece.row, piece.column + Directions.CASTLING_RIGHT.column)) {
                 val rook: ChessPiece = (getPieceAtTile(Tile(piece.row, 7)))!!
@@ -115,6 +119,7 @@ class Board() {
             is King -> piece.isFirstMove = false
             is Rook -> piece.isFirstMove = false
         }
+        return true
 
     }
 
@@ -159,13 +164,9 @@ class Board() {
                 continue
             }
 
-            if (formatedMove.contains("=")) {
-                TODO()
-            }//PROMOTION
-            val goalTile: Tile = Tile(
-                formatedMove[formatedMove.length - 1].digitToInt() - 1,
-                Character.getNumericValue(formatedMove[formatedMove.length - 2])-10
-            )
+            if (formatedMove.contains("=")) {}//PROMOTION
+            val goalTile = decodeTile(formatedMove.substring(formatedMove.length-2,formatedMove.length))
+
              formatedMove = formatedMove.removeRange(formatedMove.length - 2, formatedMove.length)
             // if move had only goalTile
             if (formatedMove.isEmpty()) {
@@ -188,10 +189,9 @@ class Board() {
         }
 
 
-
     }
 
-    fun moveByType(string: String, column: Char?, row: Char?, tile: Tile) {
+    private fun moveByType(string: String, column: Char?, row: Char?, tile: Tile) {
         val initialRow: Int = if (row != null) Character.getNumericValue(row) - 1 else 0
         val initialColumn: Int = if (column != null) Character.getNumericValue(column)-10 else 0
         val lastRow: Int = if (row != null) initialRow else 7
@@ -217,8 +217,31 @@ class Board() {
 
     }
 
+
+    private fun decodeTile(move: String): Tile{
+        return Tile(move[1].digitToInt()-1,Character.getNumericValue(move[0])-10)
+    }
+
+    private fun decodeSolutionMove(solution: Array<String>){
+        puzzleSolution = mutableListOf<Pair<Tile,Tile>>()
+        for(string in solution) {
+            val initialTile = decodeTile(string.substring(0, 2))
+            val goalTile = decodeTile(string.substring(2, 4))
+            puzzleSolution!!.add(Pair(initialTile, goalTile))
+        }
+    }
+
+
+    fun setupPuzzle(pgn: String,solution: Array<String>){
+        decodePgn(pgn)
+        decodeSolutionMove(solution)
+
+    }
+
+
+
     //Puts piece at designated position on board
-    fun setPieceAtTile(tile: Tile, piece: ChessPiece?) {
+    private fun setPieceAtTile(tile: Tile, piece: ChessPiece?) {
         board[tile.row][tile.column] = piece
     }
 

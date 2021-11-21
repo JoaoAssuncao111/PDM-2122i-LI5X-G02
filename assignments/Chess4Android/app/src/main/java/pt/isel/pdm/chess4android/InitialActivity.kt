@@ -16,6 +16,7 @@ class InitialActivity : AppCompatActivity() {
         val intent  = Intent(this,MainActivity::class.java)
 
         findViewById<Button>(R.id.fetch_button).setOnClickListener {
+            boolean = true
             intent.putExtra("Game",boolean)
             startActivity(intent)
             }
