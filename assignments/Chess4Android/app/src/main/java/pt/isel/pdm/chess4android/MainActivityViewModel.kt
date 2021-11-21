@@ -12,11 +12,9 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val MAIN_ACTIVITY_VIEW_STATE = "MainActivity.ViewState"
 
 class MainActivityViewModel(
     application: Application,
-    private val state: SavedStateHandle
 ) : AndroidViewModel(application) {
 
     var currentPiece: ChessPiece? = null
@@ -52,7 +50,6 @@ class MainActivityViewModel(
                     //state.set(MAIN_ACTIVITY_VIEW_STATE, response.body())
                 }
             }
-
             override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
                 Log.e("APP_TAG", "Request failed", t)
             }
@@ -71,7 +68,6 @@ class MainActivityViewModel(
                 currentPieceMoves = board!!.allLegalMoves(currentPiece!!)
             }
             return true
-
         }
         return false
     }
@@ -87,6 +83,7 @@ class MainActivityViewModel(
                     board!!.makeMove(currentPiece!!, tile)
                     currentPiece = null
                     currentPieceMoves = null
+                    board!!.switchTurns()
                     return true
                 }
             }

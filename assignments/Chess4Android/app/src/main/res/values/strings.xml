@@ -6,4 +6,5 @@
     <string name="puzzle_src">Puzzles source:</string>
     <string name="lichess_link" translatable="false">https://lichess.org/api</string>
     <string name="logo">Logo ISEL</string>
+    <string name="game_button">Start new game</string>
 </resources>

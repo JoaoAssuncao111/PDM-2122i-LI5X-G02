@@ -7,25 +7,51 @@
 
     <Button
         android:id="@+id/fetch_button"
-        android:layout_width="269dp"
-        android:layout_height="77dp"
+        android:layout_width="184dp"
+        android:layout_height="88dp"
         android:text="@string/fetch_button_text"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.947"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.911" />
+        app:layout_constraintVertical_bias="0.245" />
 
     <ImageView
-        android:id="@+id/lichess_icon"
-        android:layout_width="370dp"
-        android:layout_height="477dp"
-        android:layout_marginBottom="119dp"
-        app:layout_constraintBottom_toTopOf="@+id/fetch_button"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/imageView4"
+        android:layout_width="160dp"
+        android:layout_height="157dp"
+        android:layout_marginBottom="120dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fetch_button_game"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/game" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="161dp"
+        android:layout_height="145dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fetch_button"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/horsey" />
+        app:layout_constraintVertical_bias="0.211"
+        app:srcCompat="@drawable/lichess1" />
+
+    <Button
+        android:id="@+id/fetch_button_game"
+        android:layout_width="178dp"
+        android:layout_height="90dp"
+        android:text="@string/game_button"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.948"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.757" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
