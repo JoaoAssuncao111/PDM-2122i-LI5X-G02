@@ -5,73 +5,27 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import pt.isel.pdm.chess4android.databinding.ActivityMainBinding
-import pt.isel.pdm.chess4android.views.TileView
-
 
 class MainActivity : AppCompatActivity() {
-
-    private val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
 
     private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        val initialIntent = intent
-        val newIntent = Intent(this,AboutActivity::class.java)
-
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        viewModel.getDailyPuzzle()
 
+        val intent  = Intent(this,GameActivity::class.java)
 
-        if ((initialIntent.extras!!.getBoolean("Game"))) {
-            viewModel.getDailyPuzzle()
-        } else {
-            setupViews()
-            findViewById<Button>(R.id.about_button).setOnClickListener{
-                startActivity(newIntent)
+        findViewById<Button>(R.id.fetch_button).setOnClickListener {
+            intent.putExtra("Game",true)
+            startActivity(intent)
             }
 
-        }
-
-        viewModel.dailyPuzzle.observe(this) {
-            setupViews()
-            findViewById<Button>(R.id.about_button).setOnClickListener{
-                startActivity(newIntent)
-            }
+        findViewById<Button>(R.id.fetch_button_game).setOnClickListener {
+            intent.putExtra("Game",false)
+            startActivity(intent)
         }
 
     }
-
-    private fun setupViews() {
-        binding.boardView.setBoard(viewModel.board!!)
-        setContentView(binding.root)
-
-        binding.boardView.onTileClickedListener = { tile: TileView, row: Int, column: Int ->
-            //var convertedRow = 7 - row
-            var currentPiece = viewModel.currentPiece
-            //Was a piece from the current army pressed
-            if (viewModel.selectPiece(row, column)) {
-                if (currentPiece != viewModel.currentPiece) {
-                    viewModel.currentPieceMoves?.let {
-                        binding.boardView.highlightMoves(
-                            it,
-                            tile
-                        )
-                    }
-                }
-            } else {
-                if (viewModel.movePiece(row, column)) {
-                    binding.boardView.drawMove()
-                    if(viewModel.makeMoveIfPuzzle()){
-                        binding.boardView.drawMove()
-                    }
-                }
-
-            }
-        }
-
-    }
-
 }
