@@ -22,19 +22,19 @@ class MainActivityViewModel(
     }
 
 
-    val dailyPuzzle: MutableLiveData<PuzzleInfo> = MutableLiveData()
+    val dailyPuzzleDTO: MutableLiveData<PuzzleInfoDTO> = MutableLiveData()
 
 
     fun getDailyPuzzle() {
-        service.getPuzzle().enqueue(object : Callback<PuzzleInfo> {
-            override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
+        service.getPuzzle().enqueue(object : Callback<PuzzleInfoDTO> {
+            override fun onResponse(call: Call<PuzzleInfoDTO>, response: Response<PuzzleInfoDTO>) {
                 if (response.body() != null && response.isSuccessful) {
 
 
                 }
             }
 
-            override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
+            override fun onFailure(call: Call<PuzzleInfoDTO>, t: Throwable) {
                 Log.e("APP_TAG", "Request failed", t)
             }
         })
