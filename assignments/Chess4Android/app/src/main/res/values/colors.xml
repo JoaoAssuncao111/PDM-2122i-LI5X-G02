@@ -11,4 +11,8 @@
     <color name="chess_board_black">#FF804F21</color>
     <color name="highlighted_chess_board_blue">#00000FFF</color>
     <color name="highlighted_chess_board_red">#FFF00000</color>
+    <color name="list_item_background">#FFFFFF</color>
+    <color name="list_item_border">#edf0f6</color>
+    <color name="list_item_background_selected">#5EA1A3A3</color>
+    <color name="list_item_border_selected">#6F7070</color>
 </resources>

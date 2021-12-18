@@ -9,8 +9,8 @@ import java.util.Date
 @Entity(tableName = "puzzle_history")
 data class PuzzleEntity(
     @PrimaryKey val id: String,
-    val pgn: String,
-    val solution : String,
+    val game: Game,
+    val puzzle: Puzzle,
     val timestamp: Date = Date.from(Instant.now().truncatedTo(ChronoUnit.DAYS))
 ) {
     fun isTodayPuzzle(): Boolean =
