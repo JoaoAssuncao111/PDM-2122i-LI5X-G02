@@ -1,7 +1,5 @@
 package pt.isel.pdm.chess4android.models
 
-import pt.isel.pdm.chess4android.Army
-
 class Board() {
     private val side: Int = 8
 

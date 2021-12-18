@@ -1,10 +1,14 @@
-package pt.isel.pdm.chess4android
+package pt.isel.pdm.chess4android.history
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import pt.isel.pdm.chess4android.DailyPuzzleInfoDTO
+import pt.isel.pdm.chess4android.R
+import pt.isel.pdm.chess4android.about.AboutActivity
 import pt.isel.pdm.chess4android.databinding.ActivityGameBinding
 import pt.isel.pdm.chess4android.views.TileView
 
@@ -17,10 +21,19 @@ class GameActivity : AppCompatActivity() {
 
     private val viewModel: GameActivityViewModel by viewModels()
 
+    companion object {
+        fun buildIntent(origin: Activity, quoteDto: DailyPuzzleInfoDTO): Intent {
+            val msg = Intent(origin, GameActivity::class.java)
+            val QUOTE_EXTRA = ""
+            msg.putExtra(QUOTE_EXTRA, quoteDto)
+            return msg
+        }
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val initialIntent = intent
-        val newIntent = Intent(this,AboutActivity::class.java)
+        val newIntent = Intent(this, AboutActivity::class.java)
 
         super.onCreate(savedInstanceState)
 

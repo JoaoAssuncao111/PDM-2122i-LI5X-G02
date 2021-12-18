@@ -11,7 +11,8 @@ data class PuzzleEntity(
     @PrimaryKey val id: String,
     val game: Game,
     val puzzle: Puzzle,
-    val timestamp: Date = Date.from(Instant.now().truncatedTo(ChronoUnit.DAYS))
+    val timestamp: Date = Date.from(Instant.now().truncatedTo(ChronoUnit.DAYS)),
+    val state: Boolean
 ) {
     fun isTodayPuzzle(): Boolean =
         timestamp.toInstant().compareTo(Instant.now().truncatedTo(ChronoUnit.DAYS)) == 0

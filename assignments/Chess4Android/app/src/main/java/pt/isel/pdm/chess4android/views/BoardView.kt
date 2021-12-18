@@ -6,9 +6,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.widget.GridLayout
-import androidx.core.view.size
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import pt.isel.pdm.chess4android.Army
+import pt.isel.pdm.chess4android.models.Army
 import pt.isel.pdm.chess4android.R
 import pt.isel.pdm.chess4android.models.*
 import pt.isel.pdm.chess4android.views.TileView.Type

@@ -1,4 +1,4 @@
-package pt.isel.pdm.chess4android
+package pt.isel.pdm.chess4android.history
 
 import android.app.Application
 import android.util.Log
@@ -6,11 +6,6 @@ import androidx.lifecycle.*
 import pt.isel.pdm.chess4android.models.Board
 import pt.isel.pdm.chess4android.models.ChessPiece
 import pt.isel.pdm.chess4android.models.Tile
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 
 class GameActivityViewModel(

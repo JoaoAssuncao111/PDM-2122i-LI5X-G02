@@ -1,6 +1,5 @@
 package pt.isel.pdm.chess4android.models
 
-import pt.isel.pdm.chess4android.Army
 import java.util.*
 
 class Knight(army: Army, row: Int, collum: Int) : ChessPiece(army, row, collum) {

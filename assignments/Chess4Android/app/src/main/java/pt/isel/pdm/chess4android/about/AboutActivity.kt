@@ -1,4 +1,4 @@
-package pt.isel.pdm.chess4android
+package pt.isel.pdm.chess4android.about
 
 import android.content.Intent
 import android.net.Uri
@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import pt.isel.pdm.chess4android.R
 
 private const val LichessURL = "https://lichess.org/api/puzzle/daily"
 

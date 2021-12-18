@@ -1,5 +1,6 @@
-package pt.isel.pdm.chess4android
+package pt.isel.pdm.chess4android.common
 
+import pt.isel.pdm.chess4android.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,7 +33,7 @@ class PuzzleInfoRepository(
      * @param callback the function to be called to signal the completion of the
      * asynchronous operation, which is called in the MAIN THREAD.
      */
-    private fun asyncMaybeGetTodayQuoteFromDB(callback: (Result<PuzzleEntity?>) -> Unit) {
+    private fun asyncMaybeGetDailyPuzzleFromDB(callback: (Result<PuzzleEntity?>) -> Unit) {
         callbackAfterAsync(callback) {
             puzzleHistoryDao.getLast(1).firstOrNull()
         }
@@ -43,7 +44,7 @@ class PuzzleInfoRepository(
      * @param callback the function to be called to signal the completion of the
      * asynchronous operation, which is called in the MAIN THREAD.
      */
-    private fun asyncGetTodayQuoteFromAPI(callback: (Result<DailyPuzzleInfoDTO>) -> Unit) {
+    private fun asyncGetDailyPuzzleFromAPI(callback: (Result<DailyPuzzleInfoDTO>) -> Unit) {
         dailyPuzzleService.getPuzzle().enqueue(
             object: Callback<DailyPuzzleInfoDTO> {
                 override fun onResponse(call: Call<DailyPuzzleInfoDTO>, response: Response<DailyPuzzleInfoDTO>) {
@@ -75,7 +76,8 @@ class PuzzleInfoRepository(
                 PuzzleEntity(
                     id = dto.date,
                     game = dto.puzzleInfoDTO.game,
-                    puzzle = dto.puzzleInfoDTO.puzzle
+                    puzzle = dto.puzzleInfoDTO.puzzle,
+                    state = dto.state
                 )
             )
         }
@@ -93,25 +95,25 @@ class PuzzleInfoRepository(
      *
      * Using a boolean to distinguish between both options is a questionable design decision.
      */
-    fun fetchQuoteOfDay(mustSaveToDB: Boolean = false, callback: (Result<DailyPuzzleInfoDTO>) -> Unit) {
-        asyncMaybeGetTodayQuoteFromDB { maybeEntity ->
-            val maybeQuote = maybeEntity.getOrNull()
-            if (maybeQuote != null) {
+    fun fetchDailyPuzzle(mustSaveToDB: Boolean = false, callback: (Result<DailyPuzzleInfoDTO>) -> Unit) {
+        asyncMaybeGetDailyPuzzleFromDB { maybeEntity ->
+            val maybePuzzle = maybeEntity.getOrNull()
+            if (maybePuzzle != null) {
                 //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Got daily quote from local DB")
-                callback(Result.success(maybeQuote.toDailyPuzzleInfoDTO()))
+                callback(Result.success(maybePuzzle.toDailyPuzzleInfoDTO()))
             }
             else {
-                asyncGetTodayQuoteFromAPI { apiResult ->
-                    apiResult.onSuccess { quoteDto ->
+                asyncGetDailyPuzzleFromAPI { apiResult ->
+                    apiResult.onSuccess { puzzleDto ->
                         //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Got daily quote from API")
-                        asyncSaveToDB(quoteDto) { saveToDBResult ->
+                        asyncSaveToDB(puzzleDto) { saveToDBResult ->
                             saveToDBResult.onSuccess {
                                 //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Saved daily quote to local DB")
-                                callback(Result.success(quoteDto))
+                                callback(Result.success(puzzleDto))
                             }
                                 .onFailure {
                                     //Log.e(APP_TAG, "Thread ${Thread.currentThread().name}: Failed to save daily quote to local DB", it)
-                                    callback(if(mustSaveToDB) Result.failure(it) else Result.success(quoteDto))
+                                    callback(if(mustSaveToDB) Result.failure(it) else Result.success(puzzleDto))
                                 }
                         }
                     }

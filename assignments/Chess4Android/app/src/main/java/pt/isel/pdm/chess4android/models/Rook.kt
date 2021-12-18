@@ -1,8 +1,6 @@
 package pt.isel.pdm.chess4android.models
 
-import pt.isel.pdm.chess4android.Army
 import java.util.*
-import kotlin.collections.HashMap
 
 class Rook(army: Army, row: Int, collum: Int) : ChessPiece(army, row, collum) {
     var isFirstMove: Boolean = true
