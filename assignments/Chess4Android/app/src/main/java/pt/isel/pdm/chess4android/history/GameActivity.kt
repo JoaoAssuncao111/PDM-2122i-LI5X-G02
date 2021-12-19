@@ -32,13 +32,12 @@ class GameActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val initialIntent = intent
         val newIntent = Intent(this, AboutActivity::class.java)
 
         super.onCreate(savedInstanceState)
 
 
-        if ((initialIntent.extras!!.getBoolean("Game"))) {
+        if (intent.extras != null && intent.extras!!.containsKey("Game") ) {
             //viewModel.getDailyPuzzle()
         } else {
             setupViews()

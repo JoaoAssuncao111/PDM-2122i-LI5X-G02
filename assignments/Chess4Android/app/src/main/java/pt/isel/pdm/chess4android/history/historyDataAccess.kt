@@ -15,8 +15,8 @@ import java.lang.reflect.Type
 @Entity(tableName = "puzzle_history")
 data class PuzzleInfoEntity(
     @PrimaryKey val id: String,
-    val game: String,
-    val solution: String,
+    val game: Game,
+    val puzzle: Puzzle,
     val timestamp: Date = Date.from(Instant.now().truncatedTo(ChronoUnit.DAYS)),
     val state: Boolean
 ) {
@@ -32,22 +32,22 @@ class Converters {
     fun dateToTimestamp(date: Date) = date.time
 
     @TypeConverter
-    fun stringToPuzzle(value: String): Puzzle {
+    fun fromSolution(value: String): Puzzle {
         val listType: Type = object : TypeToken<Array<String?>?>() {}.type
         return Puzzle(Gson().fromJson(value, listType))
     }
 
     @TypeConverter
-     fun fromPuzzle(puzzle: Puzzle): String {
+    fun puzzleToSolution(puzzle: Puzzle): String {
         val gson = Gson()
         return gson.toJson(puzzle.solution)
     }
 
     @TypeConverter
-    fun fromGame(game: Game) = game.pgn
+    fun fromPGN(pgn:String) = Game(pgn)
 
     @TypeConverter
-    fun stringToGame(pgn:String) = Game(pgn)
+    fun gameToPGN(game:Game) = game.pgn
 }
 @Dao
 interface PuzzleHistoryDao {

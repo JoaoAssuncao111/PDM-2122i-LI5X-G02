@@ -11,9 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class DailyPuzzleApplication : Application() {
-    init {
 
-    }
 
     val dailyPuzzleService: DailyPuzzleService by lazy {
         Retrofit.Builder()

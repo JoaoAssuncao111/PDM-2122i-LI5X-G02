@@ -14,7 +14,7 @@ import retrofit2.Response
 
 
 fun PuzzleInfoEntity.toDailyPuzzleInfoDTO() = DailyPuzzleInfoDTO(
-    puzzleInfoDTO = PuzzleInfoDTO(game = this.game, this.puzzle),
+    puzzleInfoDTO = PuzzleInfoDTO(game = this.game, puzzle = this.puzzle),
     date = this.id, state = false
 )
 /**
@@ -77,7 +77,7 @@ class PuzzleInfoRepository(
             puzzleHistoryDao.insert(
                 PuzzleInfoEntity(
                     id = dto.date,
-                    game = dto.puzzleInfoDTO.game.pgn,
+                    game = dto.puzzleInfoDTO.game,
                     puzzle = dto.puzzleInfoDTO.puzzle,
                     state = dto.state
                 )
