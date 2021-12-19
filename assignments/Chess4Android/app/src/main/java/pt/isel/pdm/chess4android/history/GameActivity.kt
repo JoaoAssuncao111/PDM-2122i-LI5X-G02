@@ -22,10 +22,10 @@ class GameActivity : AppCompatActivity() {
     private val viewModel: GameActivityViewModel by viewModels()
 
     companion object {
-        fun buildIntent(origin: Activity, quoteDto: DailyPuzzleInfoDTO): Intent {
+        fun buildIntent(origin: Activity, puzzleDTO: DailyPuzzleInfoDTO): Intent {
             val msg = Intent(origin, GameActivity::class.java)
-            val QUOTE_EXTRA = ""
-            msg.putExtra(QUOTE_EXTRA, quoteDto)
+            val PUZZLE_EXTRA = "Puzzle"
+            msg.putExtra(PUZZLE_EXTRA, puzzleDTO)
             return msg
         }
     }

@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import pt.isel.pdm.chess4android.history.GameActivity
 import pt.isel.pdm.chess4android.R
+import pt.isel.pdm.chess4android.history.HistoryActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,17 +18,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         viewModel.fetchDailyPuzzle()
 
-        val intent  = Intent(this, GameActivity::class.java)
-
         findViewById<Button>(R.id.fetch_button).setOnClickListener {
             intent.putExtra("Game",true)
-            startActivity(intent)
+            startActivity(Intent(this, HistoryActivity::class.java))
             }
 
         findViewById<Button>(R.id.fetch_button_game).setOnClickListener {
-            intent.putExtra("Game",false)
-            startActivity(intent)
+            startActivity(Intent(this, GameActivity::class.java))
         }
-
     }
 }

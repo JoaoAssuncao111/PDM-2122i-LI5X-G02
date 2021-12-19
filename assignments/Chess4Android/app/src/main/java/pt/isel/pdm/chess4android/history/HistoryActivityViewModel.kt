@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import pt.isel.pdm.chess4android.DailyPuzzleInfoDTO
-import pt.isel.pdm.chess4android.PuzzleHistoryDao
 import pt.isel.pdm.chess4android.PuzzleInfoDTO
 import pt.isel.pdm.chess4android.callbackAfterAsync
 import pt.isel.pdm.chess4android.common.DailyPuzzleApplication

@@ -1,17 +1,19 @@
 package pt.isel.pdm.chess4android.common
 
 import pt.isel.pdm.chess4android.*
+import pt.isel.pdm.chess4android.history.PuzzleHistoryDao
+import pt.isel.pdm.chess4android.history.PuzzleInfoEntity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 /**
- * Extension function of [PuzzleEntity] to conveniently convert it to a [DailyPuzzleInfoDTO] instance.
+ * Extension function of [PuzzleInfoEntity] to conveniently convert it to a [DailyPuzzleInfoDTO] instance.
  * Only relevant for this activity.
  */
 
 
-fun PuzzleEntity.toDailyPuzzleInfoDTO() = DailyPuzzleInfoDTO(
+fun PuzzleInfoEntity.toDailyPuzzleInfoDTO() = DailyPuzzleInfoDTO(
     puzzleInfoDTO = PuzzleInfoDTO(game = this.game, this.puzzle),
     date = this.id, state = false
 )
@@ -33,7 +35,7 @@ class PuzzleInfoRepository(
      * @param callback the function to be called to signal the completion of the
      * asynchronous operation, which is called in the MAIN THREAD.
      */
-    private fun asyncMaybeGetDailyPuzzleFromDB(callback: (Result<PuzzleEntity?>) -> Unit) {
+    private fun asyncMaybeGetDailyPuzzleFromDB(callback: (Result<PuzzleInfoEntity?>) -> Unit) {
         callbackAfterAsync(callback) {
             puzzleHistoryDao.getLast(1).firstOrNull()
         }
@@ -73,9 +75,9 @@ class PuzzleInfoRepository(
     private fun asyncSaveToDB(dto: DailyPuzzleInfoDTO, callback: (Result<Unit>) -> Unit = { }) {
         callbackAfterAsync(callback) {
             puzzleHistoryDao.insert(
-                PuzzleEntity(
+                PuzzleInfoEntity(
                     id = dto.date,
-                    game = dto.puzzleInfoDTO.game,
+                    game = dto.puzzleInfoDTO.game.pgn,
                     puzzle = dto.puzzleInfoDTO.puzzle,
                     state = dto.state
                 )

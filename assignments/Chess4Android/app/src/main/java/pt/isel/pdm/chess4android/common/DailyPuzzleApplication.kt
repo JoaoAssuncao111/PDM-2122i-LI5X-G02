@@ -5,7 +5,7 @@ import androidx.room.Room
 import androidx.work.*
 import pt.isel.pdm.chess4android.DailyPuzzleService
 import pt.isel.pdm.chess4android.daily.DownloadDailyPuzzle
-import pt.isel.pdm.chess4android.HistoryDatabase
+import pt.isel.pdm.chess4android.history.HistoryDatabase
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
