@@ -3,7 +3,7 @@ package pt.isel.pdm.chess4android.common
 import android.app.Application
 import androidx.room.Room
 import androidx.work.*
-import pt.isel.pdm.chess4android.DailyPuzzleService
+import pt.isel.pdm.chess4android.DailyPuzzleInfoService
 import pt.isel.pdm.chess4android.daily.DownloadDailyPuzzle
 import pt.isel.pdm.chess4android.history.HistoryDatabase
 import retrofit2.Retrofit
@@ -13,12 +13,12 @@ import java.util.concurrent.TimeUnit
 class DailyPuzzleApplication : Application() {
 
 
-    val dailyPuzzleService: DailyPuzzleService by lazy {
+    val dailyPuzzleInfoService: DailyPuzzleInfoService by lazy {
         Retrofit.Builder()
             .baseUrl("https://lichess.org/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(DailyPuzzleService::class.java)
+            .create(DailyPuzzleInfoService::class.java)
     }
 
     val historyDB: HistoryDatabase by lazy {

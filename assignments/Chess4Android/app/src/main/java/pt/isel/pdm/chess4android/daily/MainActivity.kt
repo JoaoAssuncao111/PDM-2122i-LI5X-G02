@@ -16,11 +16,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        viewModel.fetchDailyPuzzle()
         findViewById<Button>(R.id.fetch_button).setOnClickListener {
-            //viewModel.fetchDailyPuzzle()
             startActivity(Intent(this, HistoryActivity::class.java))
-            }
+        }
 
         findViewById<Button>(R.id.fetch_button_game).setOnClickListener {
             startActivity(Intent(this, GameActivity::class.java))

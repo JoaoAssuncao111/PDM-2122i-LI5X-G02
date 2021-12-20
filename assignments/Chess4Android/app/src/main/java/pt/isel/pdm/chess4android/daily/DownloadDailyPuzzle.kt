@@ -13,7 +13,7 @@ class DownloadDailyPuzzle (appContext: Context, workerParams: WorkerParameters)
     : ListenableWorker(appContext, workerParams) {
     override fun startWork(): ListenableFuture<Result> {
         val app : DailyPuzzleApplication = applicationContext as DailyPuzzleApplication
-        val repo = PuzzleInfoRepository(app.dailyPuzzleService, app.historyDB.getPuzzleHistoryDao())
+        val repo = PuzzleInfoRepository(app.dailyPuzzleInfoService, app.historyDB.getPuzzleHistoryDao())
 
         return CallbackToFutureAdapter.getFuture { completer ->
             repo.fetchDailyPuzzle(mustSaveToDB = true) { result ->

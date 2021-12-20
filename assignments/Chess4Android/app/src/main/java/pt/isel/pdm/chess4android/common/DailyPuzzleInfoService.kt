@@ -9,10 +9,10 @@ import retrofit2.http.GET
 const val URL = "https://lichess.org/api/"
 
 @Parcelize
-data class DailyPuzzleInfoDTO(val puzzleInfoDTO: PuzzleInfoDTO, val date: String, val state: Boolean): Parcelable
+data class DailyPuzzleInfoDTO(val puzzleInfo: PuzzleInfo, val date: String, val state: Boolean): Parcelable
 
 @Parcelize
-data class PuzzleInfoDTO(val game: Game, val puzzle: Puzzle) :Parcelable
+data class PuzzleInfo(val game: Game, val puzzle: Puzzle) :Parcelable
 
 @Parcelize
 data class Game(val pgn: String): Parcelable
@@ -20,9 +20,9 @@ data class Game(val pgn: String): Parcelable
 @Parcelize
 data class Puzzle(val solution: Array<String>): Parcelable
 
-interface DailyPuzzleService {
+interface DailyPuzzleInfoService {
     @GET("puzzle/daily")
-    fun getPuzzle(): Call<DailyPuzzleInfoDTO>
+    fun getPuzzleInfo(): Call<PuzzleInfo>
 }
 
 /**

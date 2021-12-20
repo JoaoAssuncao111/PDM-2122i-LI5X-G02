@@ -5,9 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import pt.isel.pdm.chess4android.DailyPuzzleInfoDTO
-import pt.isel.pdm.chess4android.PuzzleInfoDTO
+import pt.isel.pdm.chess4android.PuzzleInfo
 import pt.isel.pdm.chess4android.callbackAfterAsync
 import pt.isel.pdm.chess4android.common.DailyPuzzleApplication
+import pt.isel.pdm.chess4android.common.toDailyPuzzleInfoDTO
 
 class HistoryActivityViewModel (
     application: Application,
@@ -26,11 +27,7 @@ class HistoryActivityViewModel (
             asyncAction = {
                 //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Getting history from local DB")
                 historyDao.getAll().map {
-                    DailyPuzzleInfoDTO(
-                        puzzleInfoDTO = PuzzleInfoDTO(it.game, it.puzzle),
-                        date = it.timestamp.toString(),
-                        state = it.state
-                    )
+                    it.toDailyPuzzleInfoDTO()
                 }
             },
             callback = { result ->

@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".common.DailyPuzzleApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -29,7 +30,7 @@
             android:name=".history.GameActivity"
             android:exported="false"></activity>
         <activity
-            android:name=".AboutActivity"
+            android:name=".about.AboutActivity"
             android:exported="false"></activity>
     </application>
 

@@ -22,6 +22,7 @@ class MainActivityViewModel(
 
     init {
         Log.v("APP_TAG", "MainActivityViewModel.init()")
+
     }
 
     /**
@@ -41,9 +42,9 @@ class MainActivityViewModel(
      */
     fun fetchDailyPuzzle() {
 
-        //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Fetching ...")
+        Log.v("APP_TAG", "Thread ${Thread.currentThread().name}: Fetching ...")
         val app = getApplication<DailyPuzzleApplication>()
-        val repo = PuzzleInfoRepository(app.dailyPuzzleService, app.historyDB.getPuzzleHistoryDao())
+        val repo = PuzzleInfoRepository(app.dailyPuzzleInfoService, app.historyDB.getPuzzleHistoryDao())
         repo.fetchDailyPuzzle { result ->
             result
                 .onSuccess { savedState.set(VIEW_STATE, result.getOrThrow()) }
