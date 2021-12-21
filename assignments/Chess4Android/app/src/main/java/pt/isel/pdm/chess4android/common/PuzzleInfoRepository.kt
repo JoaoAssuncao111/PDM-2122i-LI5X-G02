@@ -21,7 +21,7 @@ fun DailyPuzzleInfoDTO.toPuzzleInfoEntity() = PuzzleInfoEntity(
     id = this.date, puzzleInfo = Gson().toJson(this.puzzleInfo), state = this.state
 )
 fun PuzzleInfoEntity.toDailyPuzzleInfoDTO() = DailyPuzzleInfoDTO(
-    puzzleInfo = Gson().fromJson(this.puzzleInfo, object : TypeToken<PuzzleInfo?>() {}.type), date = this.id, state = this.state
+    puzzleInfo = Gson().fromJson(this.puzzleInfo, PuzzleInfo::class.java), date = this.id, state = this.state
 )
 /**
  * Repository for the Quote Of Day
@@ -124,7 +124,6 @@ class PuzzleInfoRepository(
                                 }
                         }
                     }
-                    callback(apiResult)
                 }
             }
         }
