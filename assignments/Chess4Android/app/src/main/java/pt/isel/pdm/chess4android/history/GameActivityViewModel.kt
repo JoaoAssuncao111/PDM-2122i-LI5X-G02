@@ -3,6 +3,7 @@ package pt.isel.pdm.chess4android.history
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import pt.isel.pdm.chess4android.PuzzleInfo
 import pt.isel.pdm.chess4android.models.Board
 import pt.isel.pdm.chess4android.models.ChessPiece
 import pt.isel.pdm.chess4android.models.Tile
@@ -24,26 +25,10 @@ class GameActivityViewModel(
 
     }
 
-    /*
-    fun getDailyPuzzle() {
-        service.getPuzzle().enqueue(object : Callback<PuzzleInfo> {
-            override fun onResponse(call: Call<PuzzleInfo>, response: Response<PuzzleInfo>) {
-                if (response.body() != null && response.isSuccessful) {
-                    board!!.setupPuzzle(
-                        response.body()!!.game.pgn,
-                        response.body()!!.puzzle.solution
-                    )
-                    dailyPuzzle.postValue(response.body())
-                    //state.set(MAIN_ACTIVITY_VIEW_STATE, response.body())
-                }
-            }
 
-            override fun onFailure(call: Call<PuzzleInfo>, t: Throwable) {
-                Log.e("APP_TAG", "Request failed", t)
-            }
-        })
+    fun setupPuzzle(puzzleInfo : PuzzleInfo){
+        board!!.setupPuzzle(puzzleInfo.game.pgn,puzzleInfo.puzzle.solution)
     }
-    */
 
 
 
@@ -91,6 +76,10 @@ class GameActivityViewModel(
             return true
         }
         return false
+    }
+
+    fun checkEnd(): Boolean {
+        return board!!.isPuzzleCompleted
     }
 
 

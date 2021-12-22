@@ -1,7 +1,6 @@
 package pt.isel.pdm.chess4android.common
 
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import pt.isel.pdm.chess4android.*
 import pt.isel.pdm.chess4android.history.PuzzleHistoryDao
 import pt.isel.pdm.chess4android.history.PuzzleInfoEntity
@@ -18,10 +17,10 @@ import java.util.*
  */
 
 fun DailyPuzzleInfoDTO.toPuzzleInfoEntity() = PuzzleInfoEntity(
-    id = this.date, puzzleInfo = Gson().toJson(this.puzzleInfo), state = this.state
+    id = this.date.time, puzzleInfo = Gson().toJson(this.puzzleInfo), state = this.state
 )
 fun PuzzleInfoEntity.toDailyPuzzleInfoDTO() = DailyPuzzleInfoDTO(
-    puzzleInfo = Gson().fromJson(this.puzzleInfo, PuzzleInfo::class.java), date = this.id, state = this.state
+    puzzleInfo = Gson().fromJson(this.puzzleInfo, PuzzleInfo::class.java), date = Date(this.id), state = this.state
 )
 /**
  * Repository for the Quote Of Day
@@ -63,7 +62,7 @@ class PuzzleInfoRepository(
                             Result.success(
                                 DailyPuzzleInfoDTO(
                                 info, Date.from(
-                                Instant.now().truncatedTo(ChronoUnit.DAYS)).toString(), false))
+                                Instant.now().truncatedTo(ChronoUnit.DAYS)), false))
                         else
                             Result.failure(ServiceUnavailable())
                     callback(result)
@@ -85,6 +84,17 @@ class PuzzleInfoRepository(
         callbackAfterAsync(callback) {
             val entity = dto.toPuzzleInfoEntity();
             puzzleHistoryDao.insert(
+                entity
+            )
+        }
+    }
+
+
+
+    fun asyncUpdateDB(dto: DailyPuzzleInfoDTO,callback: (Result<Unit>) -> Unit = { }) {
+        callbackAfterAsync(callback) {
+            val entity = dto.toPuzzleInfoEntity();
+            puzzleHistoryDao.update(
                 entity
             )
         }
