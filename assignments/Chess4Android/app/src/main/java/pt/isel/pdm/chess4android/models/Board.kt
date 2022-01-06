@@ -38,15 +38,36 @@ class Board() {
         addToBoard(Queen(Army.BLACK, 7, 3))
 
     }
+    fun allLegalMoves(piece: ChessPiece): MutableList<Tile>{
+        return allLegalMoves(piece,false)
+    }
 
-
-    fun allLegalMoves(piece: ChessPiece): MutableList<Tile> {
+    fun allLegalMoves(piece: ChessPiece,check: Boolean): MutableList<Tile> {
         val currentPieceLegalMoves = mutableListOf<Tile>()
         val allMoves = piece.myMoves()
 
         for ((key, value) in allMoves) {
             for (tile in value) {
                 val currentTilePiece = getPieceAtTile(tile)
+                val currentKing = if(currentArmy == Army.WHITE) whiteKing else blackKing
+                if(piece !is King && !check){
+                    val tempRow = piece.row
+                    val tempColumn = piece.column
+                    board[tempRow][tempColumn] = null
+                    board[tile.row][tile.column] = piece
+                    piece.row = tile.row
+                    piece.column = tile.column
+                    var isSelfCheck = false
+                    if (getAllChecks(currentArmy,Tile(currentKing!!.row, currentKing.column)).size != 0){
+                        isSelfCheck = true
+                    }
+                    piece.column = tempColumn
+                    piece.row = tempRow
+                    board[tile.row][tile.column] = currentTilePiece
+                    board[tempRow][tempColumn] = piece
+                    if(isSelfCheck) continue
+
+                }
                 if (piece is Pawn) {
                     //lets pawn move diagonally if there is an enemy piece there
                     if (key != Directions.UP && key != Directions.DOWN) {
@@ -70,7 +91,7 @@ class Board() {
                     }
                     //Stopping king from moving into a check position
                     if (currentTilePiece?.army != piece.army) {
-                        //if (getAllChecks(piece.army, tile).size != 0) continue
+                        if (getAllChecks(piece.army, tile).size != 0) continue
                     }
                 }
 
@@ -121,39 +142,74 @@ class Board() {
 
     }
 
-    //return whether or not a piece can stop the king from its army from being attacked
+    //return whether or not a piece can stop the king from its army from being checked
     fun canMoveToBlock(piece: ChessPiece, goalTiles: List<Tile>): Boolean {
+        var moves = allLegalMoves(piece)
         for (tile in goalTiles)
-            if (allLegalMoves(piece).contains(tile)) return true
+            if (moves.contains(tile)) return true
         return false
     }
 
-    //Returns all pieces that attack a certain tile (army refers to the one being attacked)
+    //Returns all pieces that attack a certain tile (army refers to the one being checked)
     fun getAllChecks(army: Army, tile: Tile): MutableList<ChessPiece> {
         var piecesThatCheck: MutableList<ChessPiece> = mutableListOf()
         for (row in board) {
             for (piece in row) {
                 if (piece != null && piece.army != army) {
-                    if (allLegalMoves(piece).contains(tile)) piecesThatCheck.add(piece)
+                    if (allLegalMoves(piece,true).contains(tile)) piecesThatCheck.add(piece)
                 }
             }
         }
         return piecesThatCheck
     }
 
+   fun isChecked(): MutableList<ChessPiece>{
+       return if(currentArmy == Army.BLACK) getAllChecks(Army.WHITE, Tile(whiteKing!!.row,whiteKing!!.column))
+       else getAllChecks(Army.BLACK, Tile(blackKing!!.row,blackKing!!.column))
+   }
+
+    fun isCheckmate(allChecks: MutableList<ChessPiece>): Boolean {
+        val enemyKingTile = if(currentArmy == Army.WHITE) Tile(blackKing!!.row,blackKing!!.column) else Tile(whiteKing!!.row,whiteKing!!.column)
+        val enemyArmy = if(currentArmy == Army.WHITE) Army.BLACK else Army.WHITE
+        if (allChecks.size == 1) {
+            val moves = allChecks[0].myMoves()
+            var movesInCheckDirection: MutableList<Tile> = mutableListOf()
+            for ((key, value) in moves) {
+                for (tile in value) {
+                    if(tile == enemyKingTile){
+                        movesInCheckDirection.add(Tile(allChecks[0].row,allChecks[0].column))
+                        movesInCheckDirection.addAll(value.subList(0,value.indexOf(tile)-1))
+                        break
+                    }
+                }
+            }
+            for(row in board) {
+                for (piece in row) {
+                    if (piece != null && piece.army == enemyArmy) {
+                        if (canMoveToBlock(piece, movesInCheckDirection!!)) return false
+                    }
+                }
+            }
+        }
+        if(allLegalMoves(getPieceAtTile(enemyKingTile)!!).size == 0) return true
+        return false
+    }
+
+
+
     fun decodePgn(pgn: String) {
         var movesToMake: List<String> = pgn.split(" ")
         for (move in movesToMake) {
 
-            var formatedMove = move
+            var formattedMove = move
 
-            formatedMove = formatedMove.replace("+", "")
-            formatedMove = formatedMove.replace("x", "")
+            formattedMove = formattedMove.replace("+", "")
+            formattedMove = formattedMove.replace("x", "")
             //Castling
-            if (formatedMove.contains("O-")) {
+            if (formattedMove.contains("O-")) {
                 val king = if (currentArmy == Army.WHITE) whiteKing else blackKing
                 val tile =
-                    if (formatedMove == "O-O") Tile(
+                    if (formattedMove == "O-O") Tile(
                         king!!.row,
                         king.column + Directions.CASTLING_RIGHT.column
                     ) else Tile(king!!.row, king.column + Directions.CASTLING_LEFT.column)
@@ -162,26 +218,26 @@ class Board() {
                 continue
             }
 
-            if (formatedMove.contains("=")) {}//PROMOTION
-            val goalTile = decodeTile(formatedMove.substring(formatedMove.length-2,formatedMove.length))
+            if (formattedMove.contains("=")) {}//PROMOTION
+            val goalTile = decodeTile(formattedMove.substring(formattedMove.length-2,formattedMove.length))
 
-             formatedMove = formatedMove.removeRange(formatedMove.length - 2, formatedMove.length)
+             formattedMove = formattedMove.removeRange(formattedMove.length - 2, formattedMove.length)
             // if move had only goalTile
-            if (formatedMove.isEmpty()) {
-                moveByType(formatedMove, null, null, goalTile)
+            if (formattedMove.isEmpty()) {
+                moveByType(formattedMove, null, null, goalTile)
             }
 
             //if move had type of piece to be moved
-            else if (formatedMove.length == 1) {
-                if (formatedMove[0].isUpperCase()) {
-                    moveByType(formatedMove, null, null, goalTile)
-                } else moveByType("", formatedMove[0], null, goalTile)
+            else if (formattedMove.length == 1) {
+                if (formattedMove[0].isUpperCase()) {
+                    moveByType(formattedMove, null, null, goalTile)
+                } else moveByType("", formattedMove[0], null, goalTile)
                 //if move had type and column of piece to be moved
-            } else if (formatedMove.length == 2) {
-                moveByType(formatedMove[0].toString(), formatedMove[1], null, goalTile)
+            } else if (formattedMove.length == 2) {
+                moveByType(formattedMove[0].toString(), formattedMove[1], null, goalTile)
                 //if move had type, column and row of piece to be moved
-            } else if (formatedMove.length == 3) {
-                moveByType(formatedMove[0].toString(), formatedMove[1], formatedMove[2], goalTile)
+            } else if (formattedMove.length == 3) {
+                moveByType(formattedMove[0].toString(), formattedMove[1], formattedMove[2], goalTile)
             }
             switchTurns()
         }
@@ -228,15 +284,6 @@ class Board() {
             puzzleSolution!!.add(Pair(initialTile, goalTile))
         }
     }
-
-
-    fun setupPuzzle(pgn: String,solution: Array<String>){
-        decodePgn(pgn)
-        decodeSolutionMove(solution)
-
-    }
-
-
 
     //Puts piece at designated position on board
     private fun setPieceAtTile(tile: Tile, piece: ChessPiece?) {
