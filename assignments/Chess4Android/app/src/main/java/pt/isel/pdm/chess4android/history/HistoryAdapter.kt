@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
+import java.text.SimpleDateFormat
 
 class HistoryItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -19,7 +20,7 @@ class HistoryItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
      * Binds this view holder to the given quote item
      */
     fun bindTo(puzzleInfoDTO: DailyPuzzleInfoDTO, onItemCLick: () -> Unit) {
-        dayView.text = puzzleInfoDTO.date
+        dayView.text = SimpleDateFormat("dd/MM/yyyy").format(puzzleInfoDTO.date)
         isCompleted.text = if(puzzleInfoDTO.state) "Solved" else "Unsolved"
 
         itemView.setOnClickListener {

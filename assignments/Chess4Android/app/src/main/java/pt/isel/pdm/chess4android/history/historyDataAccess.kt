@@ -11,7 +11,7 @@ import java.lang.reflect.Type
 
 @Entity(tableName = "puzzle_history")
 data class PuzzleInfoEntity(
-    @PrimaryKey val id: String,
+    @PrimaryKey val id: Long,
     val puzzleInfo: String,
     val state: Boolean,
 ) {
@@ -29,6 +29,9 @@ interface PuzzleHistoryDao {
 
     @Delete
     fun delete(puzzle: PuzzleInfoEntity)
+
+    @Update
+    fun update(puzzle: PuzzleInfoEntity)
 
     @Query("SELECT * FROM puzzle_history ORDER BY id DESC LIMIT 100")
     fun getAll(): List<PuzzleInfoEntity>

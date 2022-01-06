@@ -4,10 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import pt.isel.pdm.chess4android.history.GameActivity.Companion.buildIntent
+import pt.isel.pdm.chess4android.history.GameActivity.Companion.buildPuzzleIntent
 import pt.isel.pdm.chess4android.HistoryAdapter
 import pt.isel.pdm.chess4android.databinding.ActivityHistoryBinding
-import pt.isel.pdm.chess4android.history.HistoryActivityViewModel
 
 
 class HistoryActivity : AppCompatActivity() {
@@ -24,7 +23,7 @@ class HistoryActivity : AppCompatActivity() {
         // Get the list of quotes, if we haven't fetched it yet
         (viewModel.history ?: viewModel.loadHistory()).observe(this) {
             binding.puzzleList.adapter = HistoryAdapter(it) { puzzleDto ->
-                startActivity(buildIntent(this, puzzleDto))
+                startActivity(buildPuzzleIntent(this, puzzleDto))
             }
         }
     }

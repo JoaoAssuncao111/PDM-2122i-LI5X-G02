@@ -5,11 +5,12 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import retrofit2.Call
 import retrofit2.http.GET
+import java.util.*
 
 const val URL = "https://lichess.org/api/"
 
 @Parcelize
-data class DailyPuzzleInfoDTO(val puzzleInfo: PuzzleInfo, val date: String, val state: Boolean): Parcelable
+data class DailyPuzzleInfoDTO(val puzzleInfo: PuzzleInfo, val date: Date, var state: Boolean): Parcelable
 
 @Parcelize
 data class PuzzleInfo(val game: Game, val puzzle: Puzzle) :Parcelable

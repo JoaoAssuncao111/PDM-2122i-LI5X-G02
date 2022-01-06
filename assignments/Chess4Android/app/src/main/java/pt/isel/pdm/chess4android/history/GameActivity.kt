@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import pt.isel.pdm.chess4android.DailyPuzzleInfoDTO
 import pt.isel.pdm.chess4android.R
 import pt.isel.pdm.chess4android.about.AboutActivity
+import pt.isel.pdm.chess4android.daily.MainActivityViewModel
 import pt.isel.pdm.chess4android.databinding.ActivityGameBinding
 import pt.isel.pdm.chess4android.views.TileView
 
@@ -21,15 +23,17 @@ class GameActivity : AppCompatActivity() {
 
     private val viewModel: GameActivityViewModel by viewModels()
 
+    private var puzzleInfoDTO: DailyPuzzleInfoDTO? = null
+
     companion object {
-        fun buildIntent(origin: Activity, puzzleDTO: DailyPuzzleInfoDTO): Intent {
+        fun buildPuzzleIntent(origin: Activity, puzzleDTO: DailyPuzzleInfoDTO): Intent {
             val msg = Intent(origin, GameActivity::class.java)
             val PUZZLE_EXTRA = "Puzzle"
             msg.putExtra(PUZZLE_EXTRA, puzzleDTO)
             return msg
         }
     }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val newIntent = Intent(this, AboutActivity::class.java)
@@ -37,22 +41,14 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
 
-        if (intent.extras != null && intent.extras!!.containsKey("Game") ) {
-            //viewModel.getDailyPuzzle()
-        } else {
-            setupViews()
-            findViewById<Button>(R.id.about_button).setOnClickListener{
-                startActivity(newIntent)
-            }
-
+        if (intent.extras != null && intent.extras!!.containsKey("Puzzle") ) {
+            puzzleInfoDTO = intent.extras!!.getParcelable<DailyPuzzleInfoDTO>("Puzzle")!!
+            viewModel.setupPuzzle(puzzleInfoDTO!!.puzzleInfo)
         }
-
-        /*viewModel.dailyPuzzle.observe(this) {
-            setupViews()
-            findViewById<Button>(R.id.about_button).setOnClickListener{
-                startActivity(newIntent)
-            }
-        }*/
+        setupViews()
+        findViewById<Button>(R.id.about_button).setOnClickListener{
+            startActivity(newIntent)
+        }
 
     }
 
@@ -64,6 +60,7 @@ class GameActivity : AppCompatActivity() {
             //var convertedRow = 7 - row
             var currentPiece = viewModel.currentPiece
             //Was a piece from the current army pressed
+
             if (viewModel.selectPiece(row, column)) {
                 if (currentPiece != viewModel.currentPiece) {
                     viewModel.currentPieceMoves?.let {
@@ -79,8 +76,13 @@ class GameActivity : AppCompatActivity() {
                     if(viewModel.makeMoveIfPuzzle()){
                         binding.boardView.drawMove()
                     }
-                }
 
+                    if(viewModel.checkEnd() && puzzleInfoDTO != null) {
+                        puzzleInfoDTO!!.state = true
+                        MainActivityViewModel.getRepo().asyncUpdateDB(puzzleInfoDTO!!)
+                        Toast.makeText(this,"You did it!",Toast.LENGTH_LONG).show()
+                    }
+                }
             }
         }
 

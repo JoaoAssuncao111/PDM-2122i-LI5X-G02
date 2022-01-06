@@ -23,8 +23,8 @@ class DailyPuzzleApplication : Application() {
 
     val historyDB: HistoryDatabase by lazy {
         Room
-            .inMemoryDatabaseBuilder(this, HistoryDatabase::class.java)
-           // .databaseBuilder(this, HistoryDatabase::class.java, "history_db")
+            //.inMemoryDatabaseBuilder(this, HistoryDatabase::class.java)
+           .databaseBuilder(this, HistoryDatabase::class.java, "history_db")
             .build()
     }
     override fun onCreate() {
