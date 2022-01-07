@@ -33,7 +33,7 @@ class GameActivityViewModel(
 
 
     fun selectPiece(row: Int, column: Int): Boolean {
-        if (board == null || board!!.isPuzzleCompleted) return false
+        if (board == null || board!!.completed) return false
         val tile = Tile(row, column)
         //Verifies if the touch was supposed to select a piece
         if (board!!.isSameArmy(tile)) {
@@ -49,7 +49,7 @@ class GameActivityViewModel(
 
     //returns true if move was successful
     fun movePiece(row: Int, column: Int): Boolean {
-        if (board == null || board!!.isPuzzleCompleted) return false
+        if (board == null || board!!.completed) return false
         val tile = Tile(row, column)
         //Verifies if the touch was supposed to move a piece
         if (currentPiece != null) {
@@ -58,7 +58,6 @@ class GameActivityViewModel(
                     if (board!!.makeMove(currentPiece!!, tile)) {
                         currentPiece = null
                         currentPieceMoves = null
-                        board!!.switchTurns()
                         return true
                     }
                 }
@@ -69,6 +68,7 @@ class GameActivityViewModel(
 
     fun makeMoveIfPuzzle(): Boolean {
         if (board!!.puzzleSolution != null && board!!.puzzleSolution!!.isNotEmpty()) {
+            board!!.switchTurns()
             val pair = board!!.puzzleSolution!!.first()
             val piece = board!!.getPieceAtTile(pair.first)
             board!!.makeMove(piece!!, pair.second)
@@ -78,15 +78,27 @@ class GameActivityViewModel(
         return false
     }
 
-    fun checkEnd(): Boolean {
-        return board!!.isPuzzleCompleted
+    fun getAllChecks(): MutableList<ChessPiece>{
+        return board!!.isChecked()
+    }
+
+    fun endTurn(){
+        board!!.switchTurns()
+    }
+
+    fun isCompleted(): Boolean {
+        return board!!.completed
     }
 
 
-        fun isEndOfGame() {
-            //TODO("Verify game-ending situations")
-            board!!.switchTurns()
+    fun isEndOfGame(pieces: MutableList<ChessPiece>) : Boolean{
+        //"Verify game-ending situations"
+        if(board!!.isCheckmate(pieces)){
+            board!!.completed = true
+            return true
         }
-
-
+        return false
     }
+
+
+}

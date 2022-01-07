@@ -75,9 +75,18 @@ class GameActivity : AppCompatActivity() {
                     binding.boardView.drawMove()
                     if(viewModel.makeMoveIfPuzzle()){
                         binding.boardView.drawMove()
+                    }else{
+                        val checks = viewModel.getAllChecks()
+                        if(checks.size > 0) {
+                            //binding.boardView.drawCheck()
+                            if(viewModel.isEndOfGame(checks)){
+                                //message
+                            }
+                        }
+                        viewModel.endTurn()
                     }
 
-                    if(viewModel.checkEnd() && puzzleInfoDTO != null) {
+                    if(viewModel.isCompleted() && puzzleInfoDTO != null) {
                         puzzleInfoDTO!!.state = true
                         MainActivityViewModel.getRepo().asyncUpdateDB(puzzleInfoDTO!!)
                         Toast.makeText(this,"You did it!",Toast.LENGTH_LONG).show()

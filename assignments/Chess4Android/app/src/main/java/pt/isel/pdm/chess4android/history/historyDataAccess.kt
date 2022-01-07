@@ -17,11 +17,11 @@ data class PuzzleInfoEntity(
 ) {
 
 }
-/*
-class Converters {
 
+class Converters {
+    
 }
-*/
+
 @Dao
 interface PuzzleHistoryDao {
     @Insert

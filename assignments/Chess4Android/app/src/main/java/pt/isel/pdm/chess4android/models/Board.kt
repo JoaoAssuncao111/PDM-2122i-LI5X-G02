@@ -4,7 +4,7 @@ class Board() {
     private val side: Int = 8
 
     var puzzleSolution: MutableList<Pair<Tile,Tile>>? = null
-    var isPuzzleCompleted = false
+    var completed = false
     var whiteKing: ChessPiece? = null
     var blackKing: ChessPiece? = null
     var currentArmy: Army = Army.WHITE
@@ -45,12 +45,54 @@ class Board() {
     fun allLegalMoves(piece: ChessPiece,check: Boolean): MutableList<Tile> {
         val currentPieceLegalMoves = mutableListOf<Tile>()
         val allMoves = piece.myMoves()
+        val currentKing = if(currentArmy == Army.WHITE) whiteKing else blackKing
+
 
         for ((key, value) in allMoves) {
             for (tile in value) {
                 val currentTilePiece = getPieceAtTile(tile)
-                val currentKing = if(currentArmy == Army.WHITE) whiteKing else blackKing
-                if(piece !is King && !check){
+
+                //castling case
+                if (piece is King) {
+                    if (key == Directions.CASTLING_RIGHT || key == Directions.CASTLING_LEFT) {
+                        if (currentTilePiece == null) {
+                            continue
+                        } else if (currentTilePiece is Rook && currentTilePiece.isFirstMove){
+                            val kingTile = Tile(piece.row, piece.column + key.column)
+                            val rookTile = Tile(piece.row, piece.column - key.column)
+                            if(key == Directions.CASTLING_LEFT) ++rookTile.column
+                            val tempKingRow = currentKing!!.row
+                            val tempKingCol = currentKing.column
+                            val tempRookTile = tile
+                            board[tempKingRow][tempKingCol] = null
+                            board[tempRookTile.row][tempRookTile.column] = null
+                            currentKing.row = kingTile.row
+                            currentKing.column = kingTile.column
+                            currentTilePiece.row = rookTile.row
+                            currentTilePiece.column = rookTile.column
+                            board[ currentKing.row][ currentKing.column] = currentKing
+                            board[currentTilePiece.row][currentTilePiece.column] = currentTilePiece
+                            var isSelfCheck = false
+                            if (getAllChecks(currentArmy,kingTile).size != 0){
+                                isSelfCheck = true
+                            }
+                            board[ currentKing.row][ currentKing.column] = null
+                            board[currentTilePiece.row][currentTilePiece.column] = null
+                            board[tempKingRow][tempKingCol] = currentKing
+                            board[tempRookTile.row][tempRookTile.column] = currentTilePiece
+                            currentKing.row = tempKingRow
+                            currentKing.column = tempKingCol
+                            currentTilePiece.row = tile.row
+                            currentTilePiece.column = tile.column
+                            if(isSelfCheck) continue
+                            currentPieceLegalMoves.add(kingTile)
+                            break
+                        }
+                        else break
+                    }
+                }
+                if(currentTilePiece != null && currentTilePiece.army == piece.army) break;
+                if(!check){
                     val tempRow = piece.row
                     val tempColumn = piece.column
                     board[tempRow][tempColumn] = null
@@ -75,32 +117,16 @@ class Board() {
                             tile
                         )
                     } else if (currentTilePiece == null) currentPieceLegalMoves.add(tile)
-                    else break;
+                    else break
                     continue
-                }
-                //castling case
-                if (piece is King) {
-                    if (key == Directions.CASTLING_RIGHT || key == Directions.CASTLING_LEFT) {
-                        if (currentTilePiece == null) {
-                            continue
-                        } else if (currentTilePiece is Rook && currentTilePiece.isFirstMove) currentPieceLegalMoves.add(
-                            Tile(piece.row, piece.column + key.column)
-                        )
-                        else break
-
-                    }
-                    //Stopping king from moving into a check position
-                    if (currentTilePiece?.army != piece.army) {
-                        if (getAllChecks(piece.army, tile).size != 0) continue
-                    }
                 }
 
                 if (currentTilePiece == null) {
                     currentPieceLegalMoves.add(tile)
-                } else if (currentTilePiece.army != piece.army) {
+                }else {
                     currentPieceLegalMoves.add(tile)
                     break
-                } else break
+                }
             }
         }
 
@@ -112,7 +138,7 @@ class Board() {
             val pair = puzzleSolution!![0]
             if(Tile(piece.row,piece.column) != pair.first || goalTile != pair.second) return false
             puzzleSolution!!.removeFirst()
-            if(puzzleSolution!!.isEmpty()) isPuzzleCompleted = true
+            if(puzzleSolution!!.isEmpty()) completed = true
         }
 
         if (piece is King && piece.isFirstMove) {
@@ -178,7 +204,7 @@ class Board() {
                 for (tile in value) {
                     if(tile == enemyKingTile){
                         movesInCheckDirection.add(Tile(allChecks[0].row,allChecks[0].column))
-                        movesInCheckDirection.addAll(value.subList(0,value.indexOf(tile)-1))
+                        movesInCheckDirection.addAll(value.subList(0,value.indexOf(tile)))
                         break
                     }
                 }
@@ -193,6 +219,11 @@ class Board() {
         }
         if(allLegalMoves(getPieceAtTile(enemyKingTile)!!).size == 0) return true
         return false
+    }
+
+    fun setupPuzzle(pgn: String,solution: Array<String>){
+        decodePgn(pgn)
+        decodeSolutionMove(solution)
     }
 
 
