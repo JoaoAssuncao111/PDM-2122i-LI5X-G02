@@ -294,7 +294,7 @@ class Board() {
                     "K" -> if (piece !is King){continue}
                 }
 
-                if (allLegalMoves(piece).contains(tile)){
+                if (allLegalMoves(piece,true).contains(tile)){
                     makeMove(piece, tile)
                     return}
             }

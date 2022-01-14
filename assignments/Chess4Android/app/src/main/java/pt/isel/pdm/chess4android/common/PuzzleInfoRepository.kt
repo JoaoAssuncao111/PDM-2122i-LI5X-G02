@@ -115,23 +115,26 @@ class PuzzleInfoRepository(
     fun fetchDailyPuzzle(mustSaveToDB: Boolean = false, callback: (Result<DailyPuzzleInfoDTO>) -> Unit) {
         asyncMaybeGetDailyPuzzleFromDB { maybeEntity ->
             val maybePuzzle = maybeEntity.getOrNull()
+
             if (maybePuzzle != null) {
                 //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Got daily quote from local DB")
-                callback(Result.success(maybePuzzle.toDailyPuzzleInfoDTO()))
-            }
-            else {
-                asyncGetDailyPuzzleFromAPI { apiResult ->
-                    apiResult.onSuccess { puzzleDto ->
-                        //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Got daily quote from API")
-                        asyncSaveToDB(puzzleDto) { saveToDBResult ->
-                            saveToDBResult.onSuccess {
-                                //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Saved daily quote to local DB")
-                                callback(Result.success(puzzleDto))
-                            }
-                                .onFailure {
-                                    //Log.e(APP_TAG, "Thread ${Thread.currentThread().name}: Failed to save daily quote to local DB", it)
-                                    callback(if(mustSaveToDB) Result.failure(it) else Result.success(puzzleDto))
+                val timeLastPuzzle = maybePuzzle.id/86400000
+                val timeTodayPuzzle = Instant.now().toEpochMilli()/86400000
+                if(timeLastPuzzle == timeTodayPuzzle) callback(Result.success(maybePuzzle.toDailyPuzzleInfoDTO()))
+                else {
+                    asyncGetDailyPuzzleFromAPI { apiResult ->
+                        apiResult.onSuccess { puzzleDto ->
+                            //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Got daily quote from API")
+                            asyncSaveToDB(puzzleDto) { saveToDBResult ->
+                                saveToDBResult.onSuccess {
+                                    //Log.v(APP_TAG, "Thread ${Thread.currentThread().name}: Saved daily quote to local DB")
+                                    callback(Result.success(puzzleDto))
                                 }
+                                    .onFailure {
+                                        //Log.e(APP_TAG, "Thread ${Thread.currentThread().name}: Failed to save daily quote to local DB", it)
+                                        callback(if(mustSaveToDB) Result.failure(it) else Result.success(puzzleDto))
+                                    }
+                            }
                         }
                     }
                 }
